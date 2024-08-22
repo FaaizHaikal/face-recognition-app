@@ -28,46 +28,53 @@ function CameraFrame() {
   };
 
   const requestFaceRecognition = async () => {
-    const imageBlob = base64ToBlob(cameraRef.current.getScreenshot(), 'image/jpeg');
+    const imageBlob = base64ToBlob(
+      cameraRef.current.getScreenshot(),
+      'image/jpeg'
+    );
 
-    const formData = new FormData();
-    formData.append('file', imageBlob, 'image.jpeg');
+    const request = new FormData();
+    request.append('file', imageBlob, 'image.jpeg');
 
     fetch('http://localhost:8000/api/v1/recognition/recognize', {
       method: 'POST',
       headers: {
         'x-api-key': apiKey,
       },
-      body: formData,
-    }).then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          console.log(data);
-        });
-      } else {
-        console.error('Failed to recognize face:', response);
-      }
-    }).catch((error) => {
-      console.error('Error:', error);
-    });
+      body: request,
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            console.log(data);
+          });
+        } else {
+          console.error('Failed to recognize face:', response);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   useEffect(() => {
-    if (!isPhotoTaken) {
+    if (isPhotoTaken) {
+      return;
+    }
+
     const canvas = canvasRef.current;
     createOvalHole(canvas, cameraWidth, cameraHeight, faceWidth, faceHeight);
 
-    const interval = setInterval(() => {requestFaceRecognition()}, 500);
+    const interval = setInterval(() => {
+      requestFaceRecognition();
+    }, 500);
 
     return () => {
       clearInterval(interval);
     };
-  }
-  }, [canvasRef]);
+  }, [canvasRef, isPhotoTaken]);
 
   return (
-    <Box>
-      {cameraRef ? (
         <Grid container direction="column" justifyContent="center">
           <Grid item>
             {isPhotoTaken ? (
@@ -80,7 +87,7 @@ function CameraFrame() {
                   audio={false}
                   videoConstraints={videoConstraints}
                   screenshotFormat="image/jpeg"
-                  style = {{zIndex: -1, position: 'absolute'}}
+                  style={{ zIndex: -1, position: 'absolute' }}
                 />
                 <canvas ref={canvasRef} />
               </Box>
@@ -90,10 +97,6 @@ function CameraFrame() {
             {isPhotoTaken ? <RetakeImageButton /> : <CaptureImageButton />}
           </Grid>
         </Grid>
-      ) : (
-        <Typography variant="h6">Loading camera...</Typography>
-      )}
-    </Box>
   );
 }
 

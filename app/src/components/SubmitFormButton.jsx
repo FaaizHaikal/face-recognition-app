@@ -1,56 +1,65 @@
 import { useContext } from 'react';
 import AppContext from '../context/AppContext';
+import LoggerContext from '../context/LoggerContext';
 import { Button } from '@mui/material';
+import base64ToBlob from '../utils/Base64ToBlob';
 
 function SubmitFormButton() {
-  const { isPhotoTaken, photoUrl, apiKey } = useContext(AppContext);
+  const { apiKey, isPhotoTaken, setIsPhotoTaken, capturedImage, setCapturedImage, isFormValid, formData, setFormData, recognitionThreshold } = useContext(AppContext);
+  const { showLog } = useContext(LoggerContext);
+
   const handleClick = async () => {
     if (!isPhotoTaken) {
-      alert('Please take a photo first!');
+      showLog('Please take a photo first', 'warning');
       return;
     }
 
-    console.log(apiKey);
+    if (!isFormValid) {
+      showLog('Please fill the form correctly', 'warning');
+      return;
+    }
 
-    // Convert the data URL to a Blob
-    const response = await fetch(photoUrl);
-    console.log(response);
-    const blob = await response.blob();
+    const imageBlob = base64ToBlob(
+      capturedImage,
+      'image/jpeg'
+    );
 
-    console.log(blob);
+    const request = new FormData();
+    request.append('file', imageBlob, 'image.jpeg');
 
-    const formData = new FormData();
-    formData.append('file', blob, 'captured-image.png'); // Append the blob as a file
-
-    // Replace these with actual values
-    const subject = 'Michi';
-    const det_prob_threshold = '0.5';
-
-    console.log(formData);
+    const subject = formData.NIK + '_' + formData.Nama;
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/recognition/faces?subject=${subject}&det_prob_threshold=${det_prob_threshold}`,
+        `http://localhost:8000/api/v1/recognition/faces?subject=${subject}&det_prob_threshold=${recognitionThreshold}`,
         {
           method: 'POST',
           headers: {
             'x-api-key': apiKey,
           },
-          body: formData, // Send the form data
+          body: request,
         }
       );
 
       if (response.ok) {
-        const result = await response.json();
-        console.log('Response:', result);
-        alert('Image posted successfully!');
+        showLog('Form submitted successfully', 'success');
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+        setFormData({
+          Nama: '',
+          NIK: '',
+        });
       } else {
-        console.error('Failed to post image:', response);
-        alert('Failed to post image');
+        console.error('Invalid Response:', response);
+
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+        
+        showLog('Face not detected', 'error');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while posting the image');
+      showLog('Failed to submit form', 'error');
     }
   };
 
