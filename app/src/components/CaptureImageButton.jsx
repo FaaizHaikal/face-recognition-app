@@ -1,28 +1,30 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import AppContext from '../context/AppContext';
 import { Button } from '@mui/material';
-
+import cropImageWithOvalShape from '../utils/CropImageWithOvalShape';
 
 function CaptureImageButton() {
-  const { isPhotoTaken, setIsPhotoTaken, photoRef, setPhotoUrl } = useContext(AppContext);
+  const {
+    faceWidth,
+    faceHeight,
+    setIsPhotoTaken,
+    cameraRef,
+    setCapturedImage,
+  } = useContext(AppContext);
 
   const handleClick = () => {
-    setIsPhotoTaken(!isPhotoTaken);
-  }
+    const image = new Image();
+    image.src = cameraRef.current.getScreenshot();
 
-  useEffect(() => {
-    if (isPhotoTaken) {
-      setPhotoUrl(photoRef.current.toDataURL('image/png'));
-    }
-  }, [isPhotoTaken]);
+    image.onload = () => {
+      setCapturedImage(cropImageWithOvalShape(image, faceWidth, faceHeight));
+      setIsPhotoTaken(true);
+    };
+  };
 
   return (
-    <Button
-      variant="contained"
-      color={isPhotoTaken ? 'warning' : 'primary'}
-      onClick={handleClick}
-    >
-      {isPhotoTaken ? 'Retake Image' : 'Capture Image'}
+    <Button variant="contained" color="primary" onClick={handleClick}>
+      {'Capture Image'}
     </Button>
   );
 }

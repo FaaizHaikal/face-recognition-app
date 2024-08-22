@@ -10,29 +10,30 @@ function App() {
   const cameraHeight = Number(import.meta.env.VITE_CAMERA_HEIGHT);
   const faceWidth = Number(import.meta.env.VITE_FACE_WIDTH);
   const faceHeight = Number(import.meta.env.VITE_FACE_HEIGHT);
-  
-  const photoRef = useRef(null);
+
+  const cameraRef = useRef(null);
+  const [capturedImage, setCapturedImage] = useState(null);
   const [isPhotoTaken, setIsPhotoTaken] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState('');
 
   return (
-    <AppContext.Provider value={{ 
-      photoRef,
-      isPhotoTaken, 
-      setIsPhotoTaken,
-      photoUrl,
-      setPhotoUrl,
-      apiKey,
-      cameraWidth,
-      cameraHeight,
-      faceWidth,
-      faceHeight
-    }}>
-      <Box>        
+    <AppContext.Provider
+      value={{
+        apiKey,
+        cameraWidth,
+        cameraHeight,
+        faceWidth,
+        faceHeight,
+        cameraRef,
+        capturedImage,
+        setCapturedImage,
+        isPhotoTaken,
+        setIsPhotoTaken,
+      }}
+    >
+      <Box>
         <CameraFrame />
         <SubmitFormButton />
       </Box>
-      
     </AppContext.Provider>
   );
 }

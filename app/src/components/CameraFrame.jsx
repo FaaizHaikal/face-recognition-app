@@ -1,89 +1,93 @@
-import { useEffect, useRef, useContext } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
+import Webcam from 'react-webcam';
 import AppContext from '../context/AppContext';
 import { Box, Grid, Typography } from '@mui/material';
 import CaptureImageButton from './CaptureImageButton';
+import RetakeImageButton from './RetakeImageButton';
+import createOvalHole from '../utils/CreateOvalHole';
+import base64ToBlob from '../utils/Base64ToBlob';
 
 function CameraFrame() {
-  const { cameraWidth, cameraHeight, faceWidth, faceHeight, photoRef, photoUrl, isPhotoTaken } = useContext(AppContext);
+  const {
+    apiKey,
+    cameraWidth,
+    cameraHeight,
+    faceWidth,
+    faceHeight,
+    cameraRef,
+    capturedImage,
+    isPhotoTaken,
+  } = useContext(AppContext);
 
-  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  const fetchImage = async () => {
-    navigator.mediaDevices.getUserMedia({ 
-      video:  { width: cameraWidth, height: cameraHeight, frameRate: 30 },
-    }).then((stream) => {
-      let video = videoRef.current;
-      video.srcObject = stream;
-      video.play();
+  const videoConstraints = {
+    width: cameraWidth,
+    height: cameraHeight,
+    facingMode: 'user',
+  };
+
+  const requestFaceRecognition = async () => {
+    const imageBlob = base64ToBlob(cameraRef.current.getScreenshot(), 'image/jpeg');
+
+    const formData = new FormData();
+    formData.append('file', imageBlob, 'image.jpeg');
+
+    fetch('http://localhost:8000/api/v1/recognition/recognize', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+      },
+      body: formData,
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          console.log(data);
+        });
+      } else {
+        console.error('Failed to recognize face:', response);
+      }
     }).catch((error) => {
-      console.error('Failed to fetch images:', error);
+      console.error('Error:', error);
     });
   };
 
-  const drawFaceShape = () => {
-    const canvas = photoRef.current;
-    const ctx = canvas.getContext('2d');
-
-    canvas.width = cameraWidth;
-    canvas.height = cameraHeight;
-  
-    // Clear previous drawings
-    ctx.drawImage(videoRef.current, 0, 0, cameraWidth, cameraHeight);
-
-    // Crop the frame to an oval shape
-    ctx.globalCompositeOperation = 'destination-in';
-    ctx.beginPath();
-    ctx.ellipse(
-      cameraWidth / 2,   // X-coordinate of the center
-      cameraHeight / 2,  // Y-coordinate of the center
-      faceWidth / 2,   // Horizontal radius
-      faceHeight / 2,  // Vertical radius
-      0,           // Rotation angle
-      0,           // Start angle
-      2 * Math.PI  // End angle (full circle)
-    );
-    ctx.fill();
-    ctx.globalCompositeOperation = 'source-over'; 
-    ctx.stroke();
-  };
-
-  useEffect (() => {
+  useEffect(() => {
     if (!isPhotoTaken) {
-      fetchImage();
-      // drawFaceShape();
-      const intervalId = setInterval(drawFaceShape, 1000 / 30); // Roughly 60fps
-  
-      // Clean up
-      return () => clearInterval(intervalId);
-    }
-  });
+    const canvas = canvasRef.current;
+    createOvalHole(canvas, cameraWidth, cameraHeight, faceWidth, faceHeight);
+
+    const interval = setInterval(() => {requestFaceRecognition()}, 500);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }
+  }, [canvasRef]);
 
   return (
     <Box>
-      {videoRef ? (
-        <Grid container
-          direction="column"
-          justifyContent="center"
-        >
+      {cameraRef ? (
+        <Grid container direction="column" justifyContent="center">
           <Grid item>
-           {!isPhotoTaken && <video
-              ref={videoRef}
-              width={cameraWidth}
-              height={cameraHeight}
-              style={{ display: 'none' }}
-            />
-           }
-            <canvas
-              ref={photoRef}
-              width={cameraWidth}
-              height={cameraHeight}
-            />
-            <img
-              src={photoUrl}
-            />
+            {isPhotoTaken ? (
+              <img src={capturedImage} />
+            ) : (
+              <Box>
+                <Webcam
+                  ref={cameraRef}
+                  mirrored={true}
+                  audio={false}
+                  videoConstraints={videoConstraints}
+                  screenshotFormat="image/jpeg"
+                  style = {{zIndex: -1, position: 'absolute'}}
+                />
+                <canvas ref={canvasRef} />
+              </Box>
+            )}
           </Grid>
           <Grid item>
-            <CaptureImageButton />
+            {isPhotoTaken ? <RetakeImageButton /> : <CaptureImageButton />}
           </Grid>
         </Grid>
       ) : (
