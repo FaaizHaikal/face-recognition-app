@@ -15,11 +15,13 @@ function App() {
   const recognitionThreshold = Number(import.meta.env.VITE_RECOGNITION_THRESHOLD);
 
   const cameraRef = useRef(null);
+  const [isFlashActive, setIsFlashActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [isPhotoTaken, setIsPhotoTaken] = useState(false);
   const [formData, setFormData] = useState({
-    Nama: '',
-    NIK: '',
+    nama: '',
+    nik: '',
+    nomorAntrian: '',
   });
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -33,6 +35,8 @@ function App() {
         faceHeight,
         recognitionThreshold,
         cameraRef,
+        isFlashActive,
+        setIsFlashActive,
         capturedImage,
         setCapturedImage,
         isPhotoTaken,
@@ -45,6 +49,7 @@ function App() {
     >
       <Box
         style={{
+          margin: 30,
           padding: 16,
           border: '1px solid #ccc',
           borderRadius: 8,

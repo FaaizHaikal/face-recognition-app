@@ -6,6 +6,7 @@ import CaptureImageButton from './CaptureImageButton';
 import RetakeImageButton from './RetakeImageButton';
 import createOvalHole from '../utils/CreateOvalHole';
 import base64ToBlob from '../utils/Base64ToBlob';
+import Flash from './Flash';
 
 function CameraFrame() {
   const {
@@ -17,6 +18,7 @@ function CameraFrame() {
     cameraRef,
     capturedImage,
     isPhotoTaken,
+    isFlashActive,
   } = useContext(AppContext);
 
   const canvasRef = useRef(null);
@@ -26,6 +28,16 @@ function CameraFrame() {
     height: cameraHeight,
     facingMode: 'user',
   };
+
+  const updateDetectedSubject = (data) => {
+    let bestSubjectScore = 0;
+
+    for (subject in data.result.subject) {
+      if (subject.similarity > bestSubjectScore) {
+
+      }
+    }
+  }
 
   const requestFaceRecognition = async () => {
     const imageBlob = base64ToBlob(
@@ -46,7 +58,8 @@ function CameraFrame() {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            console.log(data);
+            // console.log(data.result);
+            updateDetectedSubject(data);
           });
         } else {
           console.error('Failed to recognize face:', response);
@@ -78,7 +91,10 @@ function CameraFrame() {
         <Grid container direction="column" justifyContent="center">
           <Grid item>
             {isPhotoTaken ? (
-              <img src={capturedImage} />
+              <img 
+                src={capturedImage} 
+                style={{borderRadius: 30}}
+                />
             ) : (
               <Box>
                 <Webcam
@@ -87,9 +103,13 @@ function CameraFrame() {
                   audio={false}
                   videoConstraints={videoConstraints}
                   screenshotFormat="image/jpeg"
-                  style={{ zIndex: -1, position: 'absolute' }}
+                  style={{ zIndex: -1, position: 'absolute', borderRadius: 30 }}
                 />
-                <canvas ref={canvasRef} />
+                {isFlashActive && <Flash />}
+                <canvas 
+                ref={canvasRef} 
+                style={{borderRadius: 30}}
+                />
               </Box>
             )}
           </Grid>

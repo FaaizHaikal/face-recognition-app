@@ -27,7 +27,7 @@ function SubmitFormButton() {
     const request = new FormData();
     request.append('file', imageBlob, 'image.jpeg');
 
-    const subject = formData.NIK + '_' + formData.Nama;
+    const subject = formData.nik + '_' + formData.nama;
 
     try {
       const response = await fetch(
@@ -46,8 +46,9 @@ function SubmitFormButton() {
         setCapturedImage(null);
         setIsPhotoTaken(false);
         setFormData({
-          Nama: '',
-          NIK: '',
+          nama: '',
+          nik: '',
+          nomorAntrian: '',
         });
       } else {
         console.error('Invalid Response:', response);
@@ -64,7 +65,7 @@ function SubmitFormButton() {
   };
 
   return (
-    <Button variant="contained" color="primary" onClick={handleClick}>
+    <Button variant="contained" color="success" onClick={handleClick}>
       Submit
     </Button>
   );

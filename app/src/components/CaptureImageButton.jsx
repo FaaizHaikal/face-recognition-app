@@ -9,10 +9,11 @@ function CaptureImageButton() {
     faceHeight,
     setIsPhotoTaken,
     cameraRef,
+    setIsFlashActive,
     setCapturedImage,
   } = useContext(AppContext);
 
-  const handleClick = () => {
+  const captureImage = () => {
     const image = new Image();
     image.src = cameraRef.current.getScreenshot();
 
@@ -20,6 +21,15 @@ function CaptureImageButton() {
       setCapturedImage(cropImageWithOvalShape(image, faceWidth, faceHeight));
       setIsPhotoTaken(true);
     };
+  }
+
+  const handleClick = () => {
+    setIsFlashActive(true);
+    setTimeout(() => {
+      setIsFlashActive(false);
+      captureImage();
+    }, 200);
+    
   };
 
   return (

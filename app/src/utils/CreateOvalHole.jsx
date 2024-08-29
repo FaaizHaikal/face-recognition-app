@@ -14,7 +14,7 @@ const createOvalHole = (
   ctx.clearRect(0, 0, width, height);
 
   // Draw the background outside the oval (semi-transparent overlay)
-  ctx.fillStyle = 'rgba(0, 0, 0, 1.0)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(0, 0, width, height);
 
   // Create the oval path
