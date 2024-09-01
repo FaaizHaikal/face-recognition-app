@@ -1,12 +1,24 @@
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppContext from '../context/AppContext';
 import LoggerContext from '../context/LoggerContext';
 import { Button } from '@mui/material';
 import base64ToBlob from '../utils/Base64ToBlob';
 
 function SubmitFormButton() {
-  const { apiKey, isPhotoTaken, setIsPhotoTaken, capturedImage, setCapturedImage, isFormValid, formData, setFormData, recognitionThreshold } = useContext(AppContext);
+  const {
+    apiKey,
+    isPhotoTaken,
+    setIsPhotoTaken,
+    capturedImage,
+    setCapturedImage,
+    isFormValid,
+    formData,
+    setFormData,
+  } = useContext(AppContext);
   const { showLog } = useContext(LoggerContext);
+
+  const navigate = useNavigate();
 
   const handleClick = async () => {
     if (!isPhotoTaken) {
@@ -19,10 +31,7 @@ function SubmitFormButton() {
       return;
     }
 
-    const imageBlob = base64ToBlob(
-      capturedImage,
-      'image/jpeg'
-    );
+    const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
 
     const request = new FormData();
     request.append('file', imageBlob, 'image.jpeg');
@@ -31,7 +40,7 @@ function SubmitFormButton() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/recognition/faces?subject=${subject}&det_prob_threshold=${recognitionThreshold}`,
+        `http://localhost:8000/api/v1/recognition/faces?subject=${subject}`,
         {
           method: 'POST',
           headers: {
@@ -50,12 +59,15 @@ function SubmitFormButton() {
           nik: '',
           nomorAntrian: '',
         });
+
+        // Return home
+        navigate('/');
       } else {
         console.error('Invalid Response:', response);
 
         setCapturedImage(null);
         setIsPhotoTaken(false);
-        
+
         showLog('Face not detected', 'error');
       }
     } catch (error) {

@@ -1,10 +1,9 @@
 import React, { useState, useRef } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppContext from './context/AppContext';
-import CameraFrame from './components/CameraFrame';
-import SubmitFormButton from './components/SubmitFormButton';
 import LoggerProvider from './components/LoggerProvider';
-import { Box, Grid } from '@mui/material';
-import DataInput from './components/DataInput';
+import FormPage from './pages/FormPage';
+import DetectSubjectPage from './pages/DetectSubjectPage';
 
 function App() {
   const apiKey = import.meta.env.VITE_API_KEY;
@@ -12,7 +11,7 @@ function App() {
   const cameraHeight = Number(import.meta.env.VITE_CAMERA_HEIGHT);
   const faceWidth = Number(import.meta.env.VITE_FACE_WIDTH);
   const faceHeight = Number(import.meta.env.VITE_FACE_HEIGHT);
-  const recognitionThreshold = Number(import.meta.env.VITE_RECOGNITION_THRESHOLD);
+  const scoreThreshold = Number(import.meta.env.VITE_SCORE_THRESHOLD);
 
   const cameraRef = useRef(null);
   const [isFlashActive, setIsFlashActive] = useState(false);
@@ -23,6 +22,7 @@ function App() {
     nik: '',
     nomorAntrian: '',
   });
+
   const [isFormValid, setIsFormValid] = useState(false);
 
   return (
@@ -33,7 +33,7 @@ function App() {
         cameraHeight,
         faceWidth,
         faceHeight,
-        recognitionThreshold,
+        scoreThreshold,
         cameraRef,
         isFlashActive,
         setIsFlashActive,
@@ -47,26 +47,14 @@ function App() {
         setIsFormValid,
       }}
     >
-      <Box
-        style={{
-          margin: 30,
-          padding: 16,
-          border: '1px solid #ccc',
-          borderRadius: 8,
-        }}
-      >
+      <Router>
         <LoggerProvider>
-          <Grid container>
-            <Grid item xs={12} md={6}>
-              <DataInput />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <CameraFrame />
-            </Grid>
-          </Grid>
-          <SubmitFormButton />
+          <Routes>
+            <Route path="/" element={<DetectSubjectPage />} />
+            <Route path="/form" element={<FormPage />} />
+          </Routes>
         </LoggerProvider>
-      </Box>
+      </Router>
     </AppContext.Provider>
   );
 }

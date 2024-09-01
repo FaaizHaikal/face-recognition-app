@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import AppContext from '../context/AppContext';
 import { Button } from '@mui/material';
 import cropImageWithOvalShape from '../utils/CropImageWithOvalShape';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 
 function CaptureImageButton() {
   const {
@@ -11,6 +12,7 @@ function CaptureImageButton() {
     cameraRef,
     setIsFlashActive,
     setCapturedImage,
+    cameraWidth,
   } = useContext(AppContext);
 
   const captureImage = () => {
@@ -21,7 +23,7 @@ function CaptureImageButton() {
       setCapturedImage(cropImageWithOvalShape(image, faceWidth, faceHeight));
       setIsPhotoTaken(true);
     };
-  }
+  };
 
   const handleClick = () => {
     setIsFlashActive(true);
@@ -29,12 +31,16 @@ function CaptureImageButton() {
       setIsFlashActive(false);
       captureImage();
     }, 200);
-    
   };
 
   return (
-    <Button variant="contained" color="primary" onClick={handleClick}>
-      {'Capture Image'}
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={handleClick}
+      style={{ width: cameraWidth }}
+    >
+      <CameraAltIcon />
     </Button>
   );
 }

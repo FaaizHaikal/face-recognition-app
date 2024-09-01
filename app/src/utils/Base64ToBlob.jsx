@@ -1,4 +1,8 @@
 const base64ToBlob = (base64, mimeType) => {
+  if (!base64) {
+    return;
+  }
+
   const byteString = atob(base64.split(',')[1]);
   const ab = new ArrayBuffer(byteString.length);
   const ia = new Uint8Array(ab);

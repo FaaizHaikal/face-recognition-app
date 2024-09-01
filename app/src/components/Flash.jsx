@@ -13,8 +13,7 @@ function Flash() {
         backgroundColor: 'white',
         opacity: 0.8,
       }}
-    >
-    </Box>
+    ></Box>
   );
 }
 

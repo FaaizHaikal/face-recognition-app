@@ -27,7 +27,7 @@ function LoggerProvider({ children }) {
 
   return (
     <LoggerContext.Provider value={{ showLog }}>
-      { children }
+      {children}
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',

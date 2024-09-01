@@ -5,6 +5,10 @@ const createOvalHole = (
   horizontalDiameter,
   verticalDiameter
 ) => {
+  if (!canvas) {
+    return;
+  }
+
   const ctx = canvas.getContext('2d');
 
   canvas.width = width;
