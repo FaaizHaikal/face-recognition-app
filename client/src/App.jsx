@@ -6,7 +6,7 @@ import FormPage from './pages/FormPage';
 import DetectSubjectPage from './pages/DetectSubjectPage';
 
 function App() {
-  const apiKey = import.meta.env.VITE_API_KEY;
+  const apiKey = import.meta.env.VITE_COMPRE_API_KEY;
   const cameraWidth = Number(import.meta.env.VITE_CAMERA_WIDTH);
   const cameraHeight = Number(import.meta.env.VITE_CAMERA_HEIGHT);
   const faceWidth = Number(import.meta.env.VITE_FACE_WIDTH);
