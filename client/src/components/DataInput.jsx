@@ -6,17 +6,18 @@ function DataInput() {
   const { formData, setFormData, setIsFormValid } = useContext(AppContext);
 
   const isNikValid = () => {
-    return formData.nik.length === 16 && !isNaN(Number(formData.nik));
+    console.log(formData.nik.length);
+    return formData.nik.length === 16;
   };
 
   const isNomorAntrianValid = () => {
     return (
-      formData.nomorAntrian.length > 0 && !isNaN(Number(formData.nomorAntrian))
+      formData.nomorAntrian.length > 0
     );
   };
 
   const handleChange = (event) => {
-    if (event.target.name === 'nik' || event.target.name === 'nomorAntrian') {
+    if (event.target.name === 'nik') {
       if (isNaN(Number(event.target.value))) {
         return;
       }

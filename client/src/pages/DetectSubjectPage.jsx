@@ -16,7 +16,8 @@ import { useMediaQuery, useTheme } from '@mui/material';
 
 function DetectSubjectPage() {
   const {
-    apiKey,
+    COMPRE_API_KEY,
+    SERVER_PORT,
     scoreThreshold,
     cameraRef,
     cameraWidth,
@@ -45,19 +46,38 @@ function DetectSubjectPage() {
     return box.probability > scoreThreshold && area > 4500;
   };
 
+  const fetchCustomer = async (nik) => {
+    fetch(`http://localhost:${SERVER_PORT}/api/find-customer?nik=${nik}`)
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            if (data.length > 0) {
+              const { nama } = data[0];
+              setFormData((prev) => ({
+                ...prev,
+                nik,
+                nama,
+              }));
+            }
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
   const updateDetectedSubject = (data) => {
     const result = data.result[0];
     if (detectedFaceIsValid(result.box)) {
       if (detectedFaceSec > maxDetectedFaceSec) {
         setIsFaceDetected(true);
-        console.log(result.subjects);
-        if (result.subjects.length > 0 && result.subjects[0].similarity > scoreThreshold) {
-          const [nik, nama] = result.subjects[0].subject.split('_');
-          setFormData((prev) => ({
-            ...prev,
-            nik,
-            nama,
-          }));
+        if (
+          result.subjects.length > 0 &&
+          result.subjects[0].similarity > scoreThreshold
+        ) {
+          const nik = result.subjects[0].subject
+          fetchCustomer(nik);
 
           setDetectedFaceSec(0);
           setIsFaceRecognized(true);
@@ -91,7 +111,7 @@ function DetectSubjectPage() {
         {
           method: 'POST',
           headers: {
-            'x-api-key': apiKey,
+            'x-api-key': COMPRE_API_KEY,
           },
           body: request,
         }
@@ -156,7 +176,16 @@ function DetectSubjectPage() {
   });
 
   return (
-    <Box width={cameraWidth}>
+    <Box
+      width={cameraWidth}
+      sx={{
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        left: '50%',
+        transform: 'translate(-50%, 0)',
+      }}
+    >
       {isPhotoTaken ? (
         <img src={capturedImage} style={{ borderRadius: 30 }} />
       ) : (

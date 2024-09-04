@@ -33,11 +33,16 @@ app.get('/api/find-customer', async (req, res) => {
 
 app.post('/api/add-customer', async (req, res) => {
   try {
-    const { nik, nama, nomorAntrian } = req.body
-    const newCustomer = new Customer({ nik, nama, nomorAntrian })
-    newCustomer.save()
-      .then(() => res.json({ status: 'success' }))
-      .catch((error) => console.error("Error adding customer!", error))
+    console.log(req);
+    const query = { nik: req.body.nik }
+    const customer = {
+      nama: req.body.nama,
+      nomorAntrian: req.body.nomorAntrian,
+    }
+    console.log(customer);
+    const options = { upsert: true } // Insert if not exist
+    const result = await Customer.updateOne(query, customer, options)
+    res.json(result);
   } catch (error) {
     console.error(error)
   }

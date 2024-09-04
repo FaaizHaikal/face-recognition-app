@@ -4,9 +4,11 @@ import AppContext from './context/AppContext';
 import LoggerProvider from './components/LoggerProvider';
 import FormPage from './pages/FormPage';
 import DetectSubjectPage from './pages/DetectSubjectPage';
+import TrackRouteChange from './components/TrackRouteChange';
 
 function App() {
-  const apiKey = import.meta.env.VITE_COMPRE_API_KEY;
+  const COMPRE_API_KEY = import.meta.env.VITE_COMPRE_API_KEY;
+  const SERVER_PORT = import.meta.env.VITE_SERVER_PORT;
   const cameraWidth = Number(import.meta.env.VITE_CAMERA_WIDTH);
   const cameraHeight = Number(import.meta.env.VITE_CAMERA_HEIGHT);
   const faceWidth = Number(import.meta.env.VITE_FACE_WIDTH);
@@ -28,7 +30,8 @@ function App() {
   return (
     <AppContext.Provider
       value={{
-        apiKey,
+        COMPRE_API_KEY,
+        SERVER_PORT,
         cameraWidth,
         cameraHeight,
         faceWidth,
@@ -48,6 +51,7 @@ function App() {
       }}
     >
       <Router>
+        <TrackRouteChange/>
         <LoggerProvider>
           <Routes>
             <Route path="/" element={<DetectSubjectPage />} />

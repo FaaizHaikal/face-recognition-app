@@ -7,7 +7,7 @@ import base64ToBlob from '../utils/Base64ToBlob';
 
 function SubmitFormButton() {
   const {
-    apiKey,
+    COMPRE_API_KEY,
     isPhotoTaken,
     setIsPhotoTaken,
     capturedImage,
@@ -19,6 +19,47 @@ function SubmitFormButton() {
   const { showLog } = useContext(LoggerContext);
 
   const navigate = useNavigate();
+  
+  const updateDatabase = async () => {
+    const request = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    };
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/add-customer`,
+        request
+      );
+
+      if (response.ok) {
+        showLog('Form submitted successfully', 'success');
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+        setFormData({
+          nama: '',
+          nik: '',
+          nomorAntrian: '',
+        });
+
+        // Return home
+        navigate('/');
+      } else {
+        console.error('Invalid Response:', response);
+
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+
+        showLog('Face not detected', 'error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showLog('Failed to submit form', 'error');
+    }
+  }
 
   const handleClick = async () => {
     if (!isPhotoTaken) {
@@ -36,7 +77,7 @@ function SubmitFormButton() {
     const request = new FormData();
     request.append('file', imageBlob, 'image.jpeg');
 
-    const subject = formData.nik + '_' + formData.nama;
+    const subject = formData.nik;
 
     try {
       const response = await fetch(
@@ -44,13 +85,14 @@ function SubmitFormButton() {
         {
           method: 'POST',
           headers: {
-            'x-api-key': apiKey,
+            'x-api-key': COMPRE_API_KEY,
           },
           body: request,
         }
       );
 
       if (response.ok) {
+        updateDatabase()
         showLog('Form submitted successfully', 'success');
         setCapturedImage(null);
         setIsPhotoTaken(false);
