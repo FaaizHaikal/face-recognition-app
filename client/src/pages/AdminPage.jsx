@@ -1,16 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
 import AppContext from '../context/AppContext';
 import AdminContext from '../context/AdminContext';
+import AdminAddCustomer from '../components/AdminAddCustomer';
+import AdminDeleteCustomer from '../components/AdminDeleteCustomer';
 import { DataGrid } from '@mui/x-data-grid';
+import { Button, Box, Card, CardContent, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AdminAddCustomer from '../components/AdminAddCustomer';
-import { Button, Box, Card, CardContent, Typography } from '@mui/material';
 
 function AdminPage() {
   const { SERVER_HOST, SERVER_PORT } = useContext(AppContext);
-
-  const pageSize = 10;
 
   const columns = [
     {
@@ -90,34 +89,28 @@ function AdminPage() {
           />
 
           <Box sx={{ marginTop: '10px' }}>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => setAdminAction('save')}
-          >
-            Save
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => setAdminAction('add')}
-            startIcon={<AddIcon />}
-            sx={{
-              marginLeft: '10px',
-              marginRight: '10px',
-            }}
-          >
-            Add
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={() => setAdminAction('delete')}
-          >
-            Delete
-          </Button>
+            <Button
+              variant="contained"
+              onClick={() => setAdminAction('add')}
+              startIcon={<AddIcon />}
+              sx={{
+                marginRight: '10px',
+              }}
+            >
+              Tambah
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={() => setAdminAction('delete')}
+              disabled={selectedRows.length === 0}
+            >
+              Hapus
+            </Button>
           </Box>
-          {adminAction === 'add' && <AdminAddCustomer />}
+          <AdminAddCustomer />
+          <AdminDeleteCustomer />
         </CardContent>
       </Card>
     </AdminContext.Provider>

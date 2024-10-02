@@ -1,14 +1,9 @@
-import { useContext, useEffect} from 'react';
+import { useContext, useEffect } from 'react';
 import AdminContext from '../context/AdminContext';
 import AppContext from '../context/AppContext';
 import LoggerContext from '../context/LoggerContext';
 import { styled } from '@mui/material/styles';
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  TextField,
-} from '@mui/material';
+import { Dialog, DialogActions, DialogContent, TextField } from '@mui/material';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
@@ -16,10 +11,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import base64ToBlob from '../utils/Base64ToBlob';
 
 function AdminAddCustomer() {
-  const {
-    adminAction,
-    setAdminAction,
-  } = useContext(AdminContext);
+  const { adminAction, setAdminAction } = useContext(AdminContext);
 
   const {
     COMPRE_API_KEY,
@@ -34,7 +26,7 @@ function AdminAddCustomer() {
     isFormValid,
     setIsFormValid,
     formData,
-    setFormData
+    setFormData,
   } = useContext(AppContext);
 
   const { showLog } = useContext(LoggerContext);
@@ -117,16 +109,6 @@ function AdminAddCustomer() {
   };
 
   const handleClickedYes = async () => {
-    if (!isPhotoTaken) {
-      showLog('Please take a photo first', 'warning');
-      return;
-    }
-
-    if (!isFormValid) {
-      showLog('Please fill the form correctly', 'warning');
-      return;
-    }
-
     try {
       const response = await insertOneCompreFace();
 
@@ -176,6 +158,8 @@ function AdminAddCustomer() {
     showLog('Form submitted successfully', 'success');
 
     setAdminAction('');
+
+    window.location.reload();
   };
 
   const handleClickedNo = () => {
@@ -191,90 +175,107 @@ function AdminAddCustomer() {
   };
 
   return (
-    <Dialog open={adminAction !== ''}>
+    <Dialog open={adminAction === 'add'}>
       <DialogContent>
-          <Box>
-            <Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>
-              {`Tambah Pelanggan`}
-            </Typography>
-            <TextField
-              fullWidth
-              label="Nama Lengkap"
-              margin="normal"
-              name="nama"
-              onChange={handleFormChange}
-              required
-              value={formData.nama}
-            />
-            <TextField
-              fullWidth
-              label="NIK"
-              margin="normal"
-              name="nik"
-              error={!isNikValid() && formData.nik.length > 0}
-              helperText={
-                !isNikValid() && formData.nik.length > 0
-                  ? 'NIK harus terdiri dari 16 digit angka'
-                  : ''
-              }
-              onChange={handleFormChange}
-              required
-              value={formData.nik}
-            />
-            <TextField
-              fullWidth
-              label="No. Antrian"
-              margin="normal"
-              name="nomorAntrian"
-              error={!isNomorAntrianValid() && formData.nomorAntrian.length > 0}
-              helperText={
-                !isNomorAntrianValid() && formData.nomorAntrian.length > 0
-                  ? 'Nomor antrian tidak valid'
-                  : ''
-              }
-              onChange={handleFormChange}
-              required
-              value={formData.nomorAntrian}
-            />
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>
+            {`Tambah Pelanggan`}
+          </Typography>
+          <TextField
+            fullWidth
+            label="Nama Lengkap"
+            margin="normal"
+            name="nama"
+            onChange={handleFormChange}
+            required
+            value={formData.nama}
+          />
+          <TextField
+            fullWidth
+            label="NIK"
+            margin="normal"
+            name="nik"
+            error={!isNikValid() && formData.nik.length > 0}
+            helperText={
+              !isNikValid() && formData.nik.length > 0
+                ? 'NIK harus terdiri dari 16 digit angka'
+                : ''
+            }
+            onChange={handleFormChange}
+            required
+            value={formData.nik}
+          />
+          <TextField
+            fullWidth
+            label="No. Antrian"
+            margin="normal"
+            name="nomorAntrian"
+            error={!isNomorAntrianValid() && formData.nomorAntrian.length > 0}
+            helperText={
+              !isNomorAntrianValid() && formData.nomorAntrian.length > 0
+                ? 'Nomor antrian tidak valid'
+                : ''
+            }
+            onChange={handleFormChange}
+            required
+            value={formData.nomorAntrian}
+          />
 
-            {/* Image Input */}
-            <Box
+          {/* Image Input */}
+          <Box
+            sx={{
+              alignItems: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'left',
+              mt: 2,
+            }}
+          >
+            {capturedImage && (
+              <img
+                alt="Captured"
+                src={capturedImage}
+                style={{
+                  borderRadius: 8,
+                  maxHeight: 200,
+                  marginRight: 16,
+                  maxWidth: 200,
+                }}
+              />
+            )}
+            <Button
+              color="primary"
+              component="label"
+              startIcon={<AddPhotoAlternateIcon />}
+              variant="contained"
               sx={{
-                alignItems: 'center',
-                display: 'flex',
                 mt: 2,
               }}
             >
-              <Button
-                color="primary"
-                component="label"
-                startIcon={<AddPhotoAlternateIcon />}
-                variant="contained"
-              >
-                {`Unggah Foto`}
-                <VisuallyHiddenInput
-                  type="file"
-                  accept='image/*'
-                  onChange={(event) => {
-                    const file = event.target.files[0];
+              {`Unggah Foto`}
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files[0];
 
-                    if (file) {
-                      const reader = new FileReader();
+                  if (file) {
+                    const reader = new FileReader();
 
-                      reader.onload = (event) => {
-                        setCapturedImage(event.target.result);
-                      };
+                    reader.onload = (event) => {
+                      setCapturedImage(event.target.result);
+                    };
 
-                      reader.readAsDataURL(file);
+                    reader.readAsDataURL(file);
 
-                      setIsPhotoTaken(true);
-                    }
-                  }}
-                  multiple
-                />
-              </Button>
-            </Box>
+                    setIsPhotoTaken(true);
+                  }
+                }}
+                multiple
+              />
+            </Button>
           </Box>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button
@@ -290,6 +291,7 @@ function AdminAddCustomer() {
           autoFocus
           color="success"
           sx={{ fontWeight: 900 }}
+          disabled={!isFormValid || !isPhotoTaken}
         >
           {`Tambah`}
         </Button>
