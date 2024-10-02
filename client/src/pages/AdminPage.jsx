@@ -2,11 +2,10 @@ import React, { useEffect, useState, useContext } from 'react';
 import AppContext from '../context/AppContext';
 import AdminContext from '../context/AdminContext';
 import { DataGrid } from '@mui/x-data-grid';
-import AddCustomerButton from '../components/AddCustomerButton';
-import DeleteCustomerButton from '../components/DeleteCustomerButton';
-import SaveDataButton from '../components/SaveDataButton';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AdminAddCustomer from '../components/AdminAddCustomer';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Button, Box, Card, CardContent, Typography } from '@mui/material';
 
 function AdminPage() {
   const { SERVER_HOST, SERVER_PORT } = useContext(AppContext);
@@ -91,9 +90,32 @@ function AdminPage() {
           />
 
           <Box sx={{ marginTop: '10px' }}>
-            <SaveDataButton />
-            <AddCustomerButton />
-            <DeleteCustomerButton />
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => setAdminAction('save')}
+          >
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => setAdminAction('add')}
+            startIcon={<AddIcon />}
+            sx={{
+              marginLeft: '10px',
+              marginRight: '10px',
+            }}
+          >
+            Add
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={() => setAdminAction('delete')}
+          >
+            Delete
+          </Button>
           </Box>
           {adminAction === 'add' && <AdminAddCustomer />}
         </CardContent>
