@@ -3,10 +3,12 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const Customer = require('../models/Customer')
 
+require("dotenv").config();
 const DB_PORT = process.env.DB_PORT || 27017
 const DB_NAME = process.env.DB_NAME || 'raisa'
 
-const SERVER_PORT = process.env.SERVER_PORT || 5000
+const PORT = process.env.PORT
+const HOST = process.env.HOST
 
 const app = express()
 app.use(cors())
@@ -14,9 +16,14 @@ app.use(express.json())
 
 mongoose.connect(`mongodb://localhost:${DB_PORT}/${DB_NAME}`)
 
-app.get('/api/find-customer', async (req, res) => {
+app.get('/api/get-customer', async (req, res) => {
   try {
-    const query = { nik: req.query.nik }
+    if (!req.query.nik) {
+      query = {}
+    } else {
+      query = { nik: req.query.nik }
+    }
+
     const result = await Customer.find(query)
     if (result && result.length > 0) {
       res.status(200)
@@ -33,13 +40,11 @@ app.get('/api/find-customer', async (req, res) => {
 
 app.post('/api/add-customer', async (req, res) => {
   try {
-    console.log(req);
     const query = { nik: req.body.nik }
     const customer = {
       nama: req.body.nama,
       nomorAntrian: req.body.nomorAntrian,
     }
-    console.log(customer);
     const options = { upsert: true } // Insert if not exist
     const result = await Customer.updateOne(query, customer, options)
     res.json(result);
@@ -48,11 +53,10 @@ app.post('/api/add-customer', async (req, res) => {
   }
 })
 
-
-app.listen(5000, () => {
+app.listen(PORT, HOST, () => {
   try {
 
-    console.log(`Server is running on port ${SERVER_PORT}`)
+    console.log(`Server is running on port ${PORT}`)
   } catch (error) {
     console.error(error)
   }
