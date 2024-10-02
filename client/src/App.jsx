@@ -3,11 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AppContext from './context/AppContext';
 import LoggerProvider from './components/LoggerProvider';
 import FormPage from './pages/FormPage';
+import LoginPage from './pages/LoginPage';
+import AdminPage from './pages/AdminPage';
 import DetectSubjectPage from './pages/DetectSubjectPage';
 import TrackRouteChange from './components/TrackRouteChange';
 
 function App() {
   const COMPRE_API_KEY = import.meta.env.VITE_COMPRE_API_KEY;
+  const COMPRE_HOST = import.meta.env.VITE_COMPRE_HOST;
+  const COMPRE_PORT = import.meta.env.VITE_COMPRE_PORT;
+  const SERVER_HOST = import.meta.env.VITE_SERVER_HOST;
   const SERVER_PORT = import.meta.env.VITE_SERVER_PORT;
   const cameraWidth = Number(import.meta.env.VITE_CAMERA_WIDTH);
   const cameraHeight = Number(import.meta.env.VITE_CAMERA_HEIGHT);
@@ -31,6 +36,9 @@ function App() {
     <AppContext.Provider
       value={{
         COMPRE_API_KEY,
+        COMPRE_HOST,
+        COMPRE_PORT,
+        SERVER_HOST,
         SERVER_PORT,
         cameraWidth,
         cameraHeight,
@@ -51,11 +59,13 @@ function App() {
       }}
     >
       <Router>
-        <TrackRouteChange/>
+        <TrackRouteChange />
         <LoggerProvider>
           <Routes>
             <Route path="/" element={<DetectSubjectPage />} />
             <Route path="/form" element={<FormPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </LoggerProvider>
       </Router>
