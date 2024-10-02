@@ -53,6 +53,16 @@ app.post('/api/add-customer', async (req, res) => {
   }
 })
 
+app.delete('/api/delete-customer', async (req, res) => {
+  try {
+    const niks = req.body
+    const result = await Customer.deleteMany({ nik: { $in: niks } })
+    res.json(result)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
 app.listen(PORT, HOST, () => {
   try {
 
