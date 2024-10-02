@@ -19,6 +19,7 @@ function DetectSubjectPage() {
     COMPRE_API_KEY,
     COMPRE_HOST,
     COMPRE_PORT,
+    SERVER_HOST,
     SERVER_PORT,
     scoreThreshold,
     cameraRef,
@@ -53,6 +54,7 @@ function DetectSubjectPage() {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
+            console.log(data);
             if (data.length > 0) {
               const { nama } = data[0];
               setFormData((prev) => ({
@@ -80,6 +82,7 @@ function DetectSubjectPage() {
 
   const updateDetectedSubject = (data) => {
     const result = data.result[0];
+    // console.log(result);
     if (detectedFaceIsValid(result.box)) {
       if (detectedFaceSec > maxDetectedFaceSec) {
         setIsFaceDetected(true);

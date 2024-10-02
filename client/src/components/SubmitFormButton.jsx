@@ -17,6 +17,7 @@ function SubmitFormButton() {
     capturedImage,
     setCapturedImage,
     isFormValid,
+    formData,
     setFormData,
   } = useContext(AppContext);
   const { showLog } = useContext(LoggerContext);
@@ -73,7 +74,7 @@ function SubmitFormButton() {
     }
 
     try {
-      await insertOneCompreFace();
+      const response = await insertOneCompreFace();
 
       if (!response.ok) {
         console.error('Invalid Response:', response);
@@ -93,7 +94,7 @@ function SubmitFormButton() {
     }
 
     try {
-      await insertOneDatabase();
+      const response = await insertOneDatabase();
 
       if (!response.ok) {
         console.error('Invalid Response:', response);
