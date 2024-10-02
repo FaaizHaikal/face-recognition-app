@@ -17,6 +17,8 @@ import { useMediaQuery, useTheme } from '@mui/material';
 function DetectSubjectPage() {
   const {
     COMPRE_API_KEY,
+    COMPRE_HOST,
+    COMPRE_PORT,
     SERVER_PORT,
     scoreThreshold,
     cameraRef,
@@ -47,7 +49,7 @@ function DetectSubjectPage() {
   };
 
   const fetchCustomer = async (nik) => {
-    fetch(`http://localhost:${SERVER_PORT}/api/find-customer?nik=${nik}`)
+    fetch(`http://${SERVER_HOST}:${SERVER_PORT}/api/get-customer?nik=${nik}`)
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
@@ -58,13 +60,22 @@ function DetectSubjectPage() {
                 nik,
                 nama,
               }));
+
+              setIsFaceRecognized(true);
+            } else {
+              setIsFaceRecognized(false);
             }
           });
+        } else {
+          console.error('Error:', response);
+          setIsFaceRecognized(false);
         }
       })
       .catch((error) => {
         console.error('Error:', error);
       });
+
+    setDetectedFaceSec(0);
   };
 
   const updateDetectedSubject = (data) => {
@@ -76,11 +87,8 @@ function DetectSubjectPage() {
           result.subjects.length > 0 &&
           result.subjects[0].similarity > scoreThreshold
         ) {
-          const nik = result.subjects[0].subject
+          const nik = result.subjects[0].subject;
           fetchCustomer(nik);
-
-          setDetectedFaceSec(0);
-          setIsFaceRecognized(true);
         } else {
           setIsFaceRecognized(false);
         }
@@ -107,7 +115,7 @@ function DetectSubjectPage() {
       request.append('file', imageBlob, 'image.jpeg');
 
       fetch(
-        `http://localhost:8000/api/v1/recognition/recognize?&limit=1&det_prob_threshold=${scoreThreshold}`,
+        `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/recognize?&limit=1&det_prob_threshold=${scoreThreshold}`,
         {
           method: 'POST',
           headers: {
