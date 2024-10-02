@@ -8,19 +8,22 @@ import base64ToBlob from '../utils/Base64ToBlob';
 function SubmitFormButton() {
   const {
     COMPRE_API_KEY,
+    COMPRE_HOST,
+    COMPRE_PORT,
+    SERVER_HOST,
+    SERVER_PORT,
     isPhotoTaken,
     setIsPhotoTaken,
     capturedImage,
     setCapturedImage,
     isFormValid,
-    formData,
     setFormData,
   } = useContext(AppContext);
   const { showLog } = useContext(LoggerContext);
 
   const navigate = useNavigate();
-  
-  const updateDatabase = async () => {
+
+  const insertOneDatabase = async () => {
     const request = {
       method: 'POST',
       headers: {
@@ -29,37 +32,34 @@ function SubmitFormButton() {
       body: JSON.stringify(formData),
     };
 
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/add-customer`,
-        request
-      );
+    const response = await fetch(
+      `http://${SERVER_HOST}:${SERVER_PORT}/api/add-customer`,
+      request
+    );
 
-      if (response.ok) {
-        showLog('Form submitted successfully', 'success');
-        setCapturedImage(null);
-        setIsPhotoTaken(false);
-        setFormData({
-          nama: '',
-          nik: '',
-          nomorAntrian: '',
-        });
+    return response;
+  };
 
-        // Return home
-        navigate('/');
-      } else {
-        console.error('Invalid Response:', response);
+  const insertOneCompreFace = async () => {
+    const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
 
-        setCapturedImage(null);
-        setIsPhotoTaken(false);
+    const request = new FormData();
+    request.append('file', imageBlob, 'image.jpeg');
 
-        showLog('Face not detected', 'error');
+    const subject = formData.nik;
+    const response = await fetch(
+      `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${subject}`,
+      {
+        method: 'POST',
+        headers: {
+          'x-api-key': COMPRE_API_KEY,
+        },
+        body: request,
       }
-    } catch (error) {
-      console.error('Error:', error);
-      showLog('Failed to submit form', 'error');
-    }
-  }
+    );
+
+    return response;
+  };
 
   const handleClick = async () => {
     if (!isPhotoTaken) {
@@ -72,50 +72,56 @@ function SubmitFormButton() {
       return;
     }
 
-    const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
-
-    const request = new FormData();
-    request.append('file', imageBlob, 'image.jpeg');
-
-    const subject = formData.nik;
-
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/recognition/faces?subject=${subject}`,
-        {
-          method: 'POST',
-          headers: {
-            'x-api-key': COMPRE_API_KEY,
-          },
-          body: request,
-        }
-      );
+      await insertOneCompreFace();
 
-      if (response.ok) {
-        updateDatabase()
-        showLog('Form submitted successfully', 'success');
-        setCapturedImage(null);
-        setIsPhotoTaken(false);
-        setFormData({
-          nama: '',
-          nik: '',
-          nomorAntrian: '',
-        });
-
-        // Return home
-        navigate('/');
-      } else {
+      if (!response.ok) {
         console.error('Invalid Response:', response);
 
         setCapturedImage(null);
         setIsPhotoTaken(false);
 
         showLog('Face not detected', 'error');
+
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      showLog('Face is not detected', 'error');
+
+      return;
+    }
+
+    try {
+      await insertOneDatabase();
+
+      if (!response.ok) {
+        console.error('Invalid Response:', response);
+
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+
+        showLog('Face not detected', 'error');
+
+        return;
       }
     } catch (error) {
       console.error('Error:', error);
       showLog('Failed to submit form', 'error');
     }
+
+    setCapturedImage(null);
+    setIsPhotoTaken(false);
+    setFormData({
+      nama: '',
+      nik: '',
+      nomorAntrian: '',
+    });
+
+    showLog('Form submitted successfully', 'success');
+
+    // Return home
+    navigate('/');
   };
 
   return (
