@@ -6,14 +6,11 @@ function DataInput() {
   const { formData, setFormData, setIsFormValid } = useContext(AppContext);
 
   const isNikValid = () => {
-    console.log(formData.nik.length);
     return formData.nik.length === 16;
   };
 
   const isNomorAntrianValid = () => {
-    return (
-      formData.nomorAntrian.length > 0
-    );
+    return formData.nomorAntrian.length > 0;
   };
 
   const handleChange = (event) => {
