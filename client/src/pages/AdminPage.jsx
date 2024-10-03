@@ -32,6 +32,28 @@ function AdminPage() {
     },
   ];
 
+  const handleRowUpdate = async (updatedRow, originalRow) => {
+    const nik = originalRow.id;
+    const { nama, nomorAntrian } = updatedRow;
+
+    const request = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nik, nama, nomorAntrian }),
+    };
+
+    const response = await fetch(
+      `http://${SERVER_HOST}:${SERVER_PORT}/api/add-customer`,
+      request
+    );
+
+    if (response.ok) {
+      console.log('Data berhasil diubah');
+    }
+  };
+
   const [rows, setRows] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +107,11 @@ function AdminPage() {
             loading={isLoading}
             onRowSelectionModelChange={(newSelection) => {
               setSelectedRows(newSelection);
+            }}
+            processRowUpdate={(updatedRow, originalRow) => {
+              handleRowUpdate(updatedRow, originalRow);
+
+              return updatedRow;
             }}
           />
 

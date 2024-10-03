@@ -16,7 +16,7 @@ function AdminDeleteCustomer() {
 
   const { SERVER_HOST, SERVER_PORT, COMPRE_API_KEY, COMPRE_HOST, COMPRE_PORT } =
     useContext(AppContext);
-    const { showLog } = useContext(LoggerContext);
+  const { showLog } = useContext(LoggerContext);
 
   const deleteManyDatabase = async () => {
     const response = await fetch(

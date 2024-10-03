@@ -145,7 +145,11 @@ function AdminAddCustomer() {
     } catch (error) {
       console.error('Error:', error);
       showLog('Failed to submit form', 'error');
+
+      return;
     }
+    
+    showLog('Form submitted successfully', 'success');
 
     setCapturedImage(null);
     setIsPhotoTaken(false);
@@ -154,8 +158,6 @@ function AdminAddCustomer() {
       nik: '',
       nomorAntrian: '',
     });
-
-    showLog('Form submitted successfully', 'success');
 
     setAdminAction('');
 
