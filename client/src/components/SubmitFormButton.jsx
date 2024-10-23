@@ -14,6 +14,8 @@ function SubmitFormButton() {
     SERVER_PORT,
     isPhotoTaken,
     setIsPhotoTaken,
+    subjectId,
+    setSubjectId,
     capturedImage,
     setCapturedImage,
     isFormValid,
@@ -24,13 +26,19 @@ function SubmitFormButton() {
 
   const navigate = useNavigate();
 
-  const insertOneDatabase = async () => {
+  const insertOneDatabase = async (id) => {
+    const requestBody = {
+      id: id,
+      nama: formData.nama,
+      nomorAntrian: formData.nomorAntrian,
+    }
+
     const request = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(requestBody),
     };
 
     const response = await fetch(
@@ -41,15 +49,14 @@ function SubmitFormButton() {
     return response;
   };
 
-  const insertOneCompreFace = async () => {
+  const insertOneCompreFace = async (id) => {
     const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
 
     const request = new FormData();
     request.append('file', imageBlob, 'image.jpeg');
 
-    const subject = formData.nik;
     const response = await fetch(
-      `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${subject}`,
+      `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${id}`,
       {
         method: 'POST',
         headers: {
@@ -73,8 +80,11 @@ function SubmitFormButton() {
       return;
     }
 
+    const newId = subjectId ? subjectId : Date.now().toString();
+
+    console.log('Form Data:', formData);
     try {
-      const response = await insertOneCompreFace();
+      const response = await insertOneCompreFace(newId);
 
       if (!response.ok) {
         console.error('Invalid Response:', response);
@@ -94,7 +104,7 @@ function SubmitFormButton() {
     }
 
     try {
-      const response = await insertOneDatabase();
+      const response = await insertOneDatabase(newId);
 
       if (!response.ok) {
         console.error('Invalid Response:', response);
@@ -115,14 +125,14 @@ function SubmitFormButton() {
     setIsPhotoTaken(false);
     setFormData({
       nama: '',
-      nik: '',
       nomorAntrian: '',
     });
+    setSubjectId(null);
 
     showLog('Form submitted successfully', 'success');
 
     // Return home
-    navigate('/');
+    // navigate('/');
   };
 
   return (

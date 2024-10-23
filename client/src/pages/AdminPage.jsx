@@ -14,7 +14,7 @@ function AdminPage() {
   const columns = [
     {
       field: 'id',
-      headerName: 'NIK',
+      headerName: 'ID',
       width: 150,
       editable: false,
     },
@@ -33,7 +33,7 @@ function AdminPage() {
   ];
 
   const handleRowUpdate = async (updatedRow, originalRow) => {
-    const nik = originalRow.id;
+    const id = originalRow.id;
     const { nama, nomorAntrian } = updatedRow;
 
     const request = {
@@ -41,7 +41,7 @@ function AdminPage() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ nik, nama, nomorAntrian }),
+      body: JSON.stringify({ id, nama, nomorAntrian }),
     };
 
     const response = await fetch(
@@ -68,7 +68,7 @@ function AdminPage() {
         let rows = [];
         data.forEach((item, index) => {
           rows.push({
-            id: item.nik,
+            id: item.customerId,
             nama: item.nama,
             nomorAntrian: item.nomorAntrian,
           });

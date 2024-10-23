@@ -18,13 +18,13 @@ mongoose.connect(`mongodb://localhost:${DB_PORT}/${DB_NAME}`)
 
 app.get('/api/get-customer', async (req, res) => {
   try {
-    if (!req.query.nik) {
+    if (!req.query.id) {
       query = {}
     } else {
-      query = { nik: req.query.nik }
+      query = { customerId: req.query.id }
     }
 
-    const result = await Customer.find(query)
+    const result = await Customer.find(query);
     if (result && result.length > 0) {
       res.status(200)
       res.json(result)
@@ -40,11 +40,12 @@ app.get('/api/get-customer', async (req, res) => {
 
 app.post('/api/add-customer', async (req, res) => {
   try {
-    const query = { nik: req.body.nik }
+    const query = { customerId: req.body.id }
     const customer = {
       nama: req.body.nama,
       nomorAntrian: req.body.nomorAntrian,
     }
+
     const options = { upsert: true } // Insert if not exist
     const result = await Customer.updateOne(query, customer, options)
     res.json(result);
@@ -55,8 +56,8 @@ app.post('/api/add-customer', async (req, res) => {
 
 app.delete('/api/delete-customer', async (req, res) => {
   try {
-    const niks = req.body
-    const result = await Customer.deleteMany({ nik: { $in: niks } })
+    const ids = req.body;
+    const result = await Customer.deleteMany({ customerId: { $in: ids } })
     res.json(result)
   } catch (error) {
     console.error(error)

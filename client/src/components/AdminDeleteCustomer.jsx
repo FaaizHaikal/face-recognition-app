@@ -32,15 +32,15 @@ function AdminDeleteCustomer() {
   };
 
   const deleteManyCompreFace = async () => {
-    selectedRows.forEach(async (nik) => {
+    selectedRows.forEach(async (id) => {
       const response = await fetch(
-        `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${nik}`,
+        `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${id}`,
         {
           method: 'DELETE',
           headers: {
             'x-api-key': COMPRE_API_KEY,
           },
-          body: JSON.stringify({ nik }),
+          body: JSON.stringify({ id }),
         }
       );
     });

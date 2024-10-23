@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppContext from '../context/AppContext';
 import Camera from '../components/Camera';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import base64ToBlob from '../utils/Base64ToBlob';
 import cropImageWithOvalShape from '../utils/CropImageWithOvalShape';
 import Progress from '../components/Progress';
@@ -28,6 +28,7 @@ function DetectSubjectPage() {
     faceHeight,
     isPhotoTaken,
     setIsPhotoTaken,
+    setSubjectId,
     capturedImage,
     setCapturedImage,
     formData,
@@ -49,19 +50,19 @@ function DetectSubjectPage() {
     return box.probability > scoreThreshold && area > 4500;
   };
 
-  const fetchCustomer = async (nik) => {
-    fetch(`http://${SERVER_HOST}:${SERVER_PORT}/api/get-customer?nik=${nik}`)
+  const fetchCustomer = async (id) => {
+    fetch(`http://${SERVER_HOST}:${SERVER_PORT}/api/get-customer?id=${id}`)
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            console.log(data);
             if (data.length > 0) {
               const { nama } = data[0];
               setFormData((prev) => ({
                 ...prev,
-                nik,
                 nama,
               }));
+
+              setSubjectId(id);
 
               setIsFaceRecognized(true);
             } else {
@@ -82,7 +83,6 @@ function DetectSubjectPage() {
 
   const updateDetectedSubject = (data) => {
     const result = data.result[0];
-    // console.log(result);
     if (detectedFaceIsValid(result.box)) {
       if (detectedFaceSec > maxDetectedFaceSec) {
         setIsFaceDetected(true);
@@ -90,8 +90,8 @@ function DetectSubjectPage() {
           result.subjects.length > 0 &&
           result.subjects[0].similarity > scoreThreshold
         ) {
-          const nik = result.subjects[0].subject;
-          fetchCustomer(nik);
+          const id = result.subjects[0].subject;
+          fetchCustomer(id);
         } else {
           setIsFaceRecognized(false);
         }
@@ -159,9 +159,10 @@ function DetectSubjectPage() {
     if (resetData) {
       setFormData((prev) => ({
         ...prev,
-        nik: '',
         nama: '',
       }));
+
+      setSubjectId(null);
     }
 
     navigate('/form');

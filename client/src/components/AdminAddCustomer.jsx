@@ -43,21 +43,11 @@ function AdminAddCustomer() {
     width: 1,
   });
 
-  const isNikValid = () => {
-    return formData.nik.length === 16;
-  };
-
   const isNomorAntrianValid = () => {
     return formData.nomorAntrian.length > 0;
   };
 
   const handleFormChange = (event) => {
-    if (event.target.name === 'nik') {
-      if (isNaN(Number(event.target.value))) {
-        return;
-      }
-    }
-
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
@@ -67,16 +57,21 @@ function AdminAddCustomer() {
   useEffect(() => {
     const isNamaValid = formData.nama.length > 0;
 
-    setIsFormValid(isNamaValid && isNikValid() && isNomorAntrianValid());
+    setIsFormValid(isNamaValid && isNomorAntrianValid());
   }, [formData, setIsFormValid]);
 
-  const insertOneDatabase = async () => {
+  const insertOneDatabase = async (id) => {
+    const requestBody = {
+      id: id,
+      nama: formData.nama,
+      nomorAntrian: formData.nomorAntrian,
+    }
     const request = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(requestBody),
     };
 
     const response = await fetch(
@@ -87,15 +82,14 @@ function AdminAddCustomer() {
     return response;
   };
 
-  const insertOneCompreFace = async () => {
+  const insertOneCompreFace = async (id) => {
     const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
 
     const request = new FormData();
     request.append('file', imageBlob, 'image.jpeg');
 
-    const subject = formData.nik;
     const response = await fetch(
-      `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${subject}`,
+      `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${id}`,
       {
         method: 'POST',
         headers: {
@@ -109,8 +103,10 @@ function AdminAddCustomer() {
   };
 
   const handleClickedYes = async () => {
+    const newId = Date.now().toString();
+
     try {
-      const response = await insertOneCompreFace();
+      const response = await insertOneCompreFace(newId);
 
       if (!response.ok) {
         console.error('Invalid Response:', response);
@@ -130,7 +126,7 @@ function AdminAddCustomer() {
     }
 
     try {
-      const response = await insertOneDatabase();
+      const response = await insertOneDatabase(newId);
 
       if (!response.ok) {
         console.error('Invalid Response:', response);
@@ -155,7 +151,6 @@ function AdminAddCustomer() {
     setIsPhotoTaken(false);
     setFormData({
       nama: '',
-      nik: '',
       nomorAntrian: '',
     });
 
@@ -169,7 +164,6 @@ function AdminAddCustomer() {
     setIsPhotoTaken(false);
     setFormData({
       nama: '',
-      nik: '',
       nomorAntrian: '',
     });
 
@@ -181,7 +175,7 @@ function AdminAddCustomer() {
       <DialogContent>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 900, mb: 2 }}>
-            {`Tambah Pelanggan`}
+            {`Tambah Pelanggan Baru`}
           </Typography>
           <TextField
             fullWidth
@@ -191,21 +185,6 @@ function AdminAddCustomer() {
             onChange={handleFormChange}
             required
             value={formData.nama}
-          />
-          <TextField
-            fullWidth
-            label="NIK"
-            margin="normal"
-            name="nik"
-            error={!isNikValid() && formData.nik.length > 0}
-            helperText={
-              !isNikValid() && formData.nik.length > 0
-                ? 'NIK harus terdiri dari 16 digit angka'
-                : ''
-            }
-            onChange={handleFormChange}
-            required
-            value={formData.nik}
           />
           <TextField
             fullWidth

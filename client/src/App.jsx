@@ -24,9 +24,9 @@ function App() {
   const [isFlashActive, setIsFlashActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [isPhotoTaken, setIsPhotoTaken] = useState(false);
+  const [subjectId, setSubjectId] = useState(null);
   const [formData, setFormData] = useState({
     nama: '',
-    nik: '',
     nomorAntrian: '',
   });
 
@@ -47,6 +47,8 @@ function App() {
         scoreThreshold,
         cameraRef,
         isFlashActive,
+        subjectId,
+        setSubjectId,
         setIsFlashActive,
         capturedImage,
         setCapturedImage,

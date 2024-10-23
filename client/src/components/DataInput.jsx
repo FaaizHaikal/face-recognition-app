@@ -5,21 +5,11 @@ import { Box, TextField } from '@mui/material';
 function DataInput() {
   const { formData, setFormData, setIsFormValid } = useContext(AppContext);
 
-  const isNikValid = () => {
-    return formData.nik.length === 16;
-  };
-
   const isNomorAntrianValid = () => {
     return formData.nomorAntrian.length > 0;
   };
 
   const handleChange = (event) => {
-    if (event.target.name === 'nik') {
-      if (isNaN(Number(event.target.value))) {
-        return;
-      }
-    }
-
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
@@ -29,7 +19,7 @@ function DataInput() {
   useEffect(() => {
     const isNamaValid = formData.nama.length > 0;
 
-    setIsFormValid(isNamaValid && isNikValid() && isNomorAntrianValid());
+    setIsFormValid(isNamaValid && isNomorAntrianValid());
   }, [formData, setIsFormValid]);
 
   return (
@@ -42,21 +32,6 @@ function DataInput() {
         onChange={handleChange}
         required
         value={formData.nama}
-      />
-      <TextField
-        fullWidth
-        label="NIK"
-        margin="normal"
-        name="nik"
-        error={!isNikValid() && formData.nik.length > 0}
-        helperText={
-          !isNikValid() && formData.nik.length > 0
-            ? 'NIK harus terdiri dari 16 digit angka'
-            : ''
-        }
-        onChange={handleChange}
-        required
-        value={formData.nik}
       />
       <TextField
         fullWidth
