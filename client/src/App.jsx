@@ -14,6 +14,8 @@ function App() {
   const COMPRE_PORT = import.meta.env.VITE_COMPRE_PORT;
   const SERVER_HOST = import.meta.env.VITE_SERVER_HOST;
   const SERVER_PORT = import.meta.env.VITE_SERVER_PORT;
+  const ROS2_HOST = import.meta.env.VITE_ROS2_HOST;
+  const ROS2_PORT = import.meta.env.VITE_ROS2_PORT;
   const cameraWidth = Number(import.meta.env.VITE_CAMERA_WIDTH);
   const cameraHeight = Number(import.meta.env.VITE_CAMERA_HEIGHT);
   const faceWidth = Number(import.meta.env.VITE_FACE_WIDTH);
@@ -40,6 +42,8 @@ function App() {
         COMPRE_PORT,
         SERVER_HOST,
         SERVER_PORT,
+        ROS2_HOST,
+        ROS2_PORT,
         cameraWidth,
         cameraHeight,
         faceWidth,

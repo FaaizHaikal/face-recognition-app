@@ -9,9 +9,16 @@ import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import base64ToBlob from '../utils/Base64ToBlob';
+import ROSLIB from 'roslib';
 
 function AdminAddCustomer() {
   const { adminAction, setAdminAction } = useContext(AdminContext);
+  const { ROS2_HOST, ROS2_PORT } = useContext(AppContext);
+
+  const ros = new ROSLIB.Ros({
+    url: `ws://${ROS2_HOST}:${ROS2_PORT}`,
+  });
+
 
   const {
     COMPRE_API_KEY,
@@ -82,6 +89,22 @@ function AdminAddCustomer() {
     return response;
   };
 
+  const publishRos = async () => {
+    const stringTopic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/tts',
+      messageType: 'std_msgs/String',
+    });
+
+    const message = new ROSLIB.Message({
+      data: `${formData.nama};${formData.nomorAntrian}`,
+    });
+
+    stringTopic.publish(message);
+
+    console.log('Published to ROS2');
+  }
+
   const insertOneCompreFace = async (id) => {
     const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
 
@@ -142,6 +165,15 @@ function AdminAddCustomer() {
       console.error('Error:', error);
       showLog('Failed to submit form', 'error');
 
+      return;
+    }
+
+    try {
+      await publishRos();
+    } catch (error) {
+      console.error('Error:', error);
+      showLog('Failed to publish ROS', 'error');
+      
       return;
     }
     
