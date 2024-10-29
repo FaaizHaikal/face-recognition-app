@@ -4,12 +4,15 @@ import AppContext from '../context/AppContext';
 import LoggerContext from '../context/LoggerContext';
 import { Button } from '@mui/material';
 import base64ToBlob from '../utils/Base64ToBlob';
+import ROSLIB from 'roslib';
 
 function SubmitFormButton() {
   const {
     COMPRE_API_KEY,
     COMPRE_HOST,
     COMPRE_PORT,
+    ROS2_HOST,
+    ROS2_PORT,
     SERVER_HOST,
     SERVER_PORT,
     isPhotoTaken,
@@ -25,6 +28,26 @@ function SubmitFormButton() {
   const { showLog } = useContext(LoggerContext);
 
   const navigate = useNavigate();
+
+  const ros = new ROSLIB.Ros({
+    url: `ws://${ROS2_HOST}:${ROS2_PORT}`,
+  });
+
+  const publishRos = async () => {
+    const stringTopic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/tts',
+      messageType: 'std_msgs/String',
+    });
+
+    const sapaan = formData.jenisKelamin === 'L' ? 'Bapak' : 'Ibu';
+
+    const message = new ROSLIB.Message({
+      data: `${formData.nama};${formData.nomorAntrian};${sapaan}`,
+    });
+
+    stringTopic.publish(message);
+  };
 
   const insertOneDatabase = async (id) => {
     const requestBody = {
@@ -120,6 +143,12 @@ function SubmitFormButton() {
     } catch (error) {
       console.error('Error:', error);
       showLog('Failed to submit form', 'error');
+    }
+
+    try {
+      await publishRos();
+    } catch (error) {
+      console.error('Publish ROS2 error:', error);
     }
 
     setCapturedImage(null);

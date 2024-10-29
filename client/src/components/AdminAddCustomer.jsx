@@ -175,10 +175,7 @@ function AdminAddCustomer() {
     try {
       await publishRos();
     } catch (error) {
-      console.error('Error:', error);
-      showLog('Failed to publish ROS', 'error');
-
-      return;
+      console.error('Publish ROS2 error:', error);
     }
 
     showLog('Form submitted successfully', 'success');
