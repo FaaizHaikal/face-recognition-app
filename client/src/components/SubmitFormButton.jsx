@@ -132,7 +132,7 @@ function SubmitFormButton() {
     showLog('Form submitted successfully', 'success');
 
     // Return home
-    // navigate('/');
+    navigate('/');
   };
 
   return (
