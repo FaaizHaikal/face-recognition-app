@@ -4,6 +4,7 @@ const customerSchema = new mongoose.Schema({
   customerId: String,
   nama: String,
   nomorAntrian: String,
+  jenisKelamin: String,
 })
 
 const Customer = mongoose.model('customers', customerSchema)
