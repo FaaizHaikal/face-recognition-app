@@ -188,6 +188,7 @@ function AdminAddCustomer() {
     setFormData({
       nama: '',
       nomorAntrian: '',
+      jenisKelamin: '',
     });
 
     setAdminAction('');
@@ -201,6 +202,7 @@ function AdminAddCustomer() {
     setFormData({
       nama: '',
       nomorAntrian: '',
+      jenisKelamin: '',
     });
 
     setAdminAction('');
