@@ -244,7 +244,7 @@ function AdminAddCustomer() {
           </InputLabel>
           <Select
             sx={{
-              width: '15%',
+              width: '25%',
             }}
             labelId="jenisKelaminLabel"
             name="jenisKelamin"

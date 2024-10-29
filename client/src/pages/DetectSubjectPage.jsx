@@ -56,7 +56,7 @@ function DetectSubjectPage() {
         if (response.ok) {
           response.json().then((data) => {
             if (data.length > 0) {
-              const { nama } = data[0];
+              const { nama, jenisKelamin } = data[0];
               setFormData((prev) => ({
                 ...prev,
                 nama,
