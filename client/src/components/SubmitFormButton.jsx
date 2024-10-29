@@ -31,7 +31,8 @@ function SubmitFormButton() {
       id: id,
       nama: formData.nama,
       nomorAntrian: formData.nomorAntrian,
-    }
+      jenisKelamin: formData.jenisKelamin,
+    };
 
     const request = {
       method: 'POST',
@@ -126,6 +127,7 @@ function SubmitFormButton() {
     setFormData({
       nama: '',
       nomorAntrian: '',
+      jenisKelamin: '',
     });
     setSubjectId(null);
 

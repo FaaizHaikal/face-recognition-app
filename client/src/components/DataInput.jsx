@@ -1,6 +1,8 @@
 import { useContext, useEffect } from 'react';
 import AppContext from '../context/AppContext';
-import { Box, TextField } from '@mui/material';
+import { Box, MenuItem, TextField } from '@mui/material';
+import { Select } from '@mui/material';
+import { InputLabel } from '@mui/material';
 
 function DataInput() {
   const { formData, setFormData, setIsFormValid } = useContext(AppContext);
@@ -18,8 +20,9 @@ function DataInput() {
 
   useEffect(() => {
     const isNamaValid = formData.nama.length > 0;
+    const isJenisKelaminValid = formData.jenisKelamin.length > 0;
 
-    setIsFormValid(isNamaValid && isNomorAntrianValid());
+    setIsFormValid(isNamaValid && isJenisKelaminValid && isNomorAntrianValid());
   }, [formData, setIsFormValid]);
 
   return (
@@ -48,6 +51,22 @@ function DataInput() {
         required
         value={formData.nomorAntrian}
       />
+      <InputLabel id="jenisKelaminLabel" sx={{ marginTop: 2 }}>
+        Jenis Kelamin
+      </InputLabel>
+      <Select
+        sx={{
+          width: '15%',
+        }}
+        labelId="jenisKelaminLabel"
+        name="jenisKelamin"
+        onChange={handleChange}
+        required
+        value={formData.jenisKelamin}
+      >
+        <MenuItem value="L">Pria</MenuItem>
+        <MenuItem value="P">Wanita</MenuItem>
+      </Select>
     </Box>
   );
 }

@@ -60,6 +60,7 @@ function DetectSubjectPage() {
               setFormData((prev) => ({
                 ...prev,
                 nama,
+                jenisKelamin,
               }));
 
               setSubjectId(id);
@@ -160,6 +161,8 @@ function DetectSubjectPage() {
       setFormData((prev) => ({
         ...prev,
         nama: '',
+        nomorAntrian: '',
+        jenisKelamin: '',
       }));
 
       setSubjectId(null);

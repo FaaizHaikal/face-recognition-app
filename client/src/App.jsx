@@ -30,6 +30,7 @@ function App() {
   const [formData, setFormData] = useState({
     nama: '',
     nomorAntrian: '',
+    jenisKelamin: '',
   });
 
   const [isFormValid, setIsFormValid] = useState(false);

@@ -7,6 +7,9 @@ import { Dialog, DialogActions, DialogContent, TextField } from '@mui/material';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/material';
+import { MenuItem } from '@mui/material';
+import { Select } from '@mui/material';
+import { InputLabel } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import base64ToBlob from '../utils/Base64ToBlob';
 import ROSLIB from 'roslib';
@@ -18,7 +21,6 @@ function AdminAddCustomer() {
   const ros = new ROSLIB.Ros({
     url: `ws://${ROS2_HOST}:${ROS2_PORT}`,
   });
-
 
   const {
     COMPRE_API_KEY,
@@ -63,8 +65,9 @@ function AdminAddCustomer() {
 
   useEffect(() => {
     const isNamaValid = formData.nama.length > 0;
+    const isJenisKelaminValid = formData.jenisKelamin.length > 0;
 
-    setIsFormValid(isNamaValid && isNomorAntrianValid());
+    setIsFormValid(isNamaValid && isJenisKelaminValid && isNomorAntrianValid());
   }, [formData, setIsFormValid]);
 
   const insertOneDatabase = async (id) => {
@@ -72,7 +75,8 @@ function AdminAddCustomer() {
       id: id,
       nama: formData.nama,
       nomorAntrian: formData.nomorAntrian,
-    }
+      jenisKelamin: formData.jenisKelamin,
+    };
     const request = {
       method: 'POST',
       headers: {
@@ -96,14 +100,14 @@ function AdminAddCustomer() {
       messageType: 'std_msgs/String',
     });
 
+    const sapaan = formData.jenisKelamin === 'L' ? 'Bapak' : 'Ibu';
+
     const message = new ROSLIB.Message({
-      data: `${formData.nama};${formData.nomorAntrian}`,
+      data: `${formData.nama};${formData.nomorAntrian};${sapaan}`,
     });
 
     stringTopic.publish(message);
-
-    console.log('Published to ROS2');
-  }
+  };
 
   const insertOneCompreFace = async (id) => {
     const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
@@ -173,10 +177,10 @@ function AdminAddCustomer() {
     } catch (error) {
       console.error('Error:', error);
       showLog('Failed to publish ROS', 'error');
-      
+
       return;
     }
-    
+
     showLog('Form submitted successfully', 'success');
 
     setCapturedImage(null);
@@ -233,6 +237,22 @@ function AdminAddCustomer() {
             required
             value={formData.nomorAntrian}
           />
+          <InputLabel id="jenisKelaminLabel" sx={{ marginTop: 2 }}>
+            Jenis Kelamin
+          </InputLabel>
+          <Select
+            sx={{
+              width: '15%',
+            }}
+            labelId="jenisKelaminLabel"
+            name="jenisKelamin"
+            onChange={handleFormChange}
+            required
+            value={formData.jenisKelamin}
+          >
+            <MenuItem value="L">Pria</MenuItem>
+            <MenuItem value="P">Wanita</MenuItem>
+          </Select>
 
           {/* Image Input */}
           <Box
