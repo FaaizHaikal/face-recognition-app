@@ -1,26 +1,40 @@
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 import { Box } from '@mui/material';
 import { Button } from '@mui/material';
 import { Card } from '@mui/material';
 import { FormControl, FormLabel } from '@mui/material';
 import { Typography } from '@mui/material';
 import { TextField } from '@mui/material';
+import LoggerContext from '../context/LoggerContext';
+import AppContext from '../context/AppContext';
 
 function LoginPage() {
+  const { showLog } = useContext(LoggerContext);
+  const { setIsAdminLoggedIn } = useContext(AppContext);
+
+  const navigate = useNavigate();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const username = event.target.username.value;
     const password = event.target.password.value;
 
-    console.log(username, password);
+    if (username === 'raisa' && password === 'itssurabaya') {
+      setIsAdminLoggedIn(true);
+      navigate('/admin');
+    } else {
+      showLog('Username atau password salah', 'error');
+    }
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
+        position: 'absolute',
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
       }}
     >
       <Card

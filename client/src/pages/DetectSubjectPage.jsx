@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Typography } from '@mui/material';
 import AppContext from '../context/AppContext';
 import Camera from '../components/Camera';
 import { Box, Button } from '@mui/material';
@@ -197,10 +198,21 @@ function DetectSubjectPage() {
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
+        top: '25%',
         left: '50%',
-        transform: 'translate(-50%, 0)',
+        transform: 'translate(-50%, -25%)',
       }}
     >
+      <Typography
+        variant="h6"
+        sx={{
+          textAlign: 'center',
+          marginBottom: 2,
+          fontWeight: 'bold',
+        }}
+      >
+        Hadapkan wajah Anda ke kamera
+      </Typography>
       {isPhotoTaken ? (
         <img src={capturedImage} style={{ borderRadius: 30 }} />
       ) : (

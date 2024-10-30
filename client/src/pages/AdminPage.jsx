@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppContext from '../context/AppContext';
 import AdminContext from '../context/AdminContext';
 import AdminAddCustomer from '../components/AdminAddCustomer';
@@ -9,7 +10,14 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 function AdminPage() {
-  const { SERVER_HOST, SERVER_PORT } = useContext(AppContext);
+  const { SERVER_HOST, SERVER_PORT, isAdminLoggedIn } = useContext(AppContext);
+
+  const navigate = useNavigate();
+
+  if (!isAdminLoggedIn) {
+    navigate('/login');
+  }
+    
 
   const columns = [
     {

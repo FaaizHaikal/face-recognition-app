@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import AppContext from '../context/AppContext';
 
 function TrackRouteChange() {
-  const { setIsPhotoTaken, setCapturedImage } = useContext(AppContext);
+  const { setIsPhotoTaken, setCapturedImage, setIsAdminLoggedIn } = useContext(AppContext);
   const location = useLocation();
 
   useEffect(() => {
@@ -11,6 +11,8 @@ function TrackRouteChange() {
       case '/':
         setIsPhotoTaken(false);
         setCapturedImage(null);
+        setIsAdminLoggedIn(false);
+
         break;
     }
   }, [location]);

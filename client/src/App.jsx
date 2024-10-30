@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
 import DetectSubjectPage from './pages/DetectSubjectPage';
 import TrackRouteChange from './components/TrackRouteChange';
+import Navbar from './components/Navbar';
 
 function App() {
   const COMPRE_API_KEY = import.meta.env.VITE_COMPRE_API_KEY;
@@ -23,6 +24,7 @@ function App() {
   const scoreThreshold = Number(import.meta.env.VITE_SCORE_THRESHOLD);
 
   const cameraRef = useRef(null);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isFlashActive, setIsFlashActive] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [isPhotoTaken, setIsPhotoTaken] = useState(false);
@@ -53,6 +55,8 @@ function App() {
         cameraRef,
         isFlashActive,
         subjectId,
+        isAdminLoggedIn,
+        setIsAdminLoggedIn,
         setSubjectId,
         setIsFlashActive,
         capturedImage,
@@ -67,6 +71,7 @@ function App() {
     >
       <Router>
         <TrackRouteChange />
+        <Navbar />
         <LoggerProvider>
           <Routes>
             <Route path="/" element={<DetectSubjectPage />} />
