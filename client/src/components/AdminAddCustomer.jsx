@@ -141,13 +141,13 @@ function AdminAddCustomer() {
         setCapturedImage(null);
         setIsPhotoTaken(false);
 
-        showLog('Face is not detected', 'error');
+        showLog('Wajah tidak terdeteksi', 'error');
 
         return;
       }
     } catch (error) {
       console.error(error);
-      showLog('Face is not detected', 'error');
+      showLog('Wajah tidak terdeteksi', 'error');
 
       return;
     }
@@ -161,13 +161,13 @@ function AdminAddCustomer() {
         setCapturedImage(null);
         setIsPhotoTaken(false);
 
-        showLog('Face not detected', 'error');
+        showLog('Wajah tidak terdeteksi', 'error');
 
         return;
       }
     } catch (error) {
       console.error('Error:', error);
-      showLog('Failed to submit form', 'error');
+      showLog('Gagal menambah data', 'error');
 
       return;
     }
@@ -178,7 +178,7 @@ function AdminAddCustomer() {
       console.error('Publish ROS2 error:', error);
     }
 
-    showLog('Form submitted successfully', 'success');
+    showLog('Berhasil menambah data', 'success');
 
     setCapturedImage(null);
     setIsPhotoTaken(false);

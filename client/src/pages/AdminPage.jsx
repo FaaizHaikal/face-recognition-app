@@ -21,9 +21,9 @@ function AdminPage() {
 
   const navigate = useNavigate();
 
-  // if (!isAdminLoggedIn) {
-  //   navigate('/login');
-  // }
+  if (!isAdminLoggedIn) {
+    navigate('/login');
+  }
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',

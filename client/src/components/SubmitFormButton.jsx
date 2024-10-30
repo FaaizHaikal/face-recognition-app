@@ -95,12 +95,12 @@ function SubmitFormButton() {
 
   const handleClick = async () => {
     if (!isPhotoTaken) {
-      showLog('Please take a photo first', 'warning');
+      showLog('Tolong ambil foto terlebih dahulu', 'warning');
       return;
     }
 
     if (!isFormValid) {
-      showLog('Please fill the form correctly', 'warning');
+      showLog('Tolong isi data dengan benar', 'warning');
       return;
     }
 
@@ -116,13 +116,13 @@ function SubmitFormButton() {
         setCapturedImage(null);
         setIsPhotoTaken(false);
 
-        showLog('Face not detected', 'error');
+        showLog('Wajah tidak terdeteksi', 'error');
 
         return;
       }
     } catch (error) {
       console.error(error);
-      showLog('Face is not detected', 'error');
+      showLog('Wajah tidak terdeteksi', 'error');
 
       return;
     }
@@ -136,13 +136,13 @@ function SubmitFormButton() {
         setCapturedImage(null);
         setIsPhotoTaken(false);
 
-        showLog('Face not detected', 'error');
+        showLog('Wajah tidak terdeteksi', 'error');
 
         return;
       }
     } catch (error) {
       console.error('Error:', error);
-      showLog('Failed to submit form', 'error');
+      showLog('Gagal menambah data', 'error');
     }
 
     try {
@@ -160,7 +160,7 @@ function SubmitFormButton() {
     });
     setSubjectId(null);
 
-    showLog('Form submitted successfully', 'success');
+    showLog('Berhasil menambah data', 'success');
 
     // Return home
     navigate('/');
