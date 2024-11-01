@@ -43,7 +43,6 @@ app.post('/api/add-customer', async (req, res) => {
     const query = { customerId: req.body.id }
     const customer = {
       nama: req.body.nama,
-      nomorAntrian: req.body.nomorAntrian,
       jenisKelamin: req.body.jenisKelamin,
     }
 

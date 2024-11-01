@@ -52,10 +52,6 @@ function AdminAddCustomer() {
     width: 1,
   });
 
-  const isNomorAntrianValid = () => {
-    return formData.nomorAntrian.length > 0;
-  };
-
   const handleFormChange = (event) => {
     setFormData({
       ...formData,
@@ -67,14 +63,13 @@ function AdminAddCustomer() {
     const isNamaValid = formData.nama.length > 0;
     const isJenisKelaminValid = formData.jenisKelamin.length > 0;
 
-    setIsFormValid(isNamaValid && isJenisKelaminValid && isNomorAntrianValid());
+    setIsFormValid(isNamaValid && isJenisKelaminValid);
   }, [formData, setIsFormValid]);
 
   const insertOneDatabase = async (id) => {
     const requestBody = {
       id: id,
       nama: formData.nama,
-      nomorAntrian: formData.nomorAntrian,
       jenisKelamin: formData.jenisKelamin,
     };
     const request = {
@@ -103,7 +98,7 @@ function AdminAddCustomer() {
     const sapaan = formData.jenisKelamin === 'L' ? 'Bapak' : 'Ibu';
 
     const message = new ROSLIB.Message({
-      data: `${formData.nama};${formData.nomorAntrian};${sapaan}`,
+      data: `${formData.nama};${sapaan}`,
     });
 
     stringTopic.publish(message);
@@ -184,7 +179,6 @@ function AdminAddCustomer() {
     setIsPhotoTaken(false);
     setFormData({
       nama: '',
-      nomorAntrian: '',
       jenisKelamin: '',
     });
 
@@ -198,7 +192,6 @@ function AdminAddCustomer() {
     setIsPhotoTaken(false);
     setFormData({
       nama: '',
-      nomorAntrian: '',
       jenisKelamin: '',
     });
 
@@ -220,21 +213,6 @@ function AdminAddCustomer() {
             onChange={handleFormChange}
             required
             value={formData.nama}
-          />
-          <TextField
-            fullWidth
-            label="No. Antrian"
-            margin="normal"
-            name="nomorAntrian"
-            error={!isNomorAntrianValid() && formData.nomorAntrian.length > 0}
-            helperText={
-              !isNomorAntrianValid() && formData.nomorAntrian.length > 0
-                ? 'Nomor antrian tidak valid'
-                : ''
-            }
-            onChange={handleFormChange}
-            required
-            value={formData.nomorAntrian}
           />
           <InputLabel id="jenisKelaminLabel" sx={{ marginTop: 2 }}>
             Jenis Kelamin

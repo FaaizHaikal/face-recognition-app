@@ -43,7 +43,7 @@ function SubmitFormButton() {
     const sapaan = formData.jenisKelamin === 'L' ? 'Bapak' : 'Ibu';
 
     const message = new ROSLIB.Message({
-      data: `${formData.nama};${formData.nomorAntrian};${sapaan}`,
+      data: `${formData.nama};${sapaan}`,
     });
 
     stringTopic.publish(message);
@@ -53,7 +53,6 @@ function SubmitFormButton() {
     const requestBody = {
       id: id,
       nama: formData.nama,
-      nomorAntrian: formData.nomorAntrian,
       jenisKelamin: formData.jenisKelamin,
     };
 
@@ -155,7 +154,6 @@ function SubmitFormButton() {
     setIsPhotoTaken(false);
     setFormData({
       nama: '',
-      nomorAntrian: '',
       jenisKelamin: '',
     });
     setSubjectId(null);

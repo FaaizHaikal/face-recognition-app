@@ -162,7 +162,6 @@ function DetectSubjectPage() {
       setFormData((prev) => ({
         ...prev,
         nama: '',
-        nomorAntrian: '',
         jenisKelamin: '',
       }));
 

@@ -73,11 +73,6 @@ function AdminPage() {
       width: 250,
     },
     {
-      field: 'nomorAntrian',
-      headerName: 'Nomor Antrian',
-      width: 150,
-    },
-    {
       field: 'jenisKelamin',
       headerName: 'Jenis Kelamin',
       width: 130,
@@ -98,7 +93,6 @@ function AdminPage() {
                 setFormData({
                   id: params.row.id,
                   nama: params.row.nama,
-                  nomorAntrian: params.row.nomorAntrian,
                   jenisKelamin: params.row.jenisKelamin,
                 });
 
@@ -174,7 +168,6 @@ function AdminPage() {
           rows.push({
             id: item.customerId,
             nama: item.nama,
-            nomorAntrian: item.nomorAntrian,
             jenisKelamin: item.jenisKelamin,
           });
         });

@@ -7,10 +7,6 @@ import { InputLabel } from '@mui/material';
 function DataInput() {
   const { formData, setFormData, setIsFormValid } = useContext(AppContext);
 
-  const isNomorAntrianValid = () => {
-    return formData.nomorAntrian.length > 0;
-  };
-
   const handleChange = (event) => {
     setFormData({
       ...formData,
@@ -22,7 +18,7 @@ function DataInput() {
     const isNamaValid = formData.nama.length > 0;
     const isJenisKelaminValid = formData.jenisKelamin.length > 0;
 
-    setIsFormValid(isNamaValid && isJenisKelaminValid && isNomorAntrianValid());
+    setIsFormValid(isNamaValid && isJenisKelaminValid);
   }, [formData, setIsFormValid]);
 
   return (
@@ -35,21 +31,6 @@ function DataInput() {
         onChange={handleChange}
         required
         value={formData.nama}
-      />
-      <TextField
-        fullWidth
-        label="No. Antrian"
-        margin="normal"
-        name="nomorAntrian"
-        error={!isNomorAntrianValid() && formData.nomorAntrian.length > 0}
-        helperText={
-          !isNomorAntrianValid() && formData.nomorAntrian.length > 0
-            ? 'Nomor antrian tidak valid'
-            : ''
-        }
-        onChange={handleChange}
-        required
-        value={formData.nomorAntrian}
       />
       <InputLabel id="jenisKelaminLabel" sx={{ marginTop: 2 }}>
         Jenis Kelamin

@@ -31,7 +31,6 @@ function App() {
   const [subjectId, setSubjectId] = useState(null);
   const [formData, setFormData] = useState({
     nama: '',
-    nomorAntrian: '',
     jenisKelamin: '',
   });
 

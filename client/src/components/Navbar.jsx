@@ -14,7 +14,7 @@ function Navbar() {
       <Toolbar>
         <img src="/src/assets/LogoITS.png" alt="Logo" style={{ marginRight: '10px', height: '40px' }} />
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Face Recognition Raisa ITS
+          Face Recognition R2S2
         </Typography>
         <Button color="inherit" component={NavLink} to="/" startIcon={<HomeIcon/>}>
           Home
