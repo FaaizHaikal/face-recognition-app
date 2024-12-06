@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import AppContext from '../context/AppContext';
+import LoggerContext from '../context/LoggerContext';
 import Camera from '../components/Camera';
 import { Box, Button } from '@mui/material';
 import base64ToBlob from '../utils/Base64ToBlob';
@@ -14,6 +15,7 @@ import {
   DialogContentText,
 } from '@mui/material';
 import { useMediaQuery, useTheme } from '@mui/material';
+import ROSLIB from 'roslib';
 
 function DetectSubjectPage() {
   const {
@@ -29,22 +31,151 @@ function DetectSubjectPage() {
     faceHeight,
     isPhotoTaken,
     setIsPhotoTaken,
+    subjectId,
     setSubjectId,
     capturedImage,
     setCapturedImage,
     formData,
     setFormData,
   } = useContext(AppContext);
+  const { showLog } = useContext(LoggerContext);
 
   const maxDetectedFaceSec = 4;
   const [detectedFaceSec, setDetectedFaceSec] = useState(0);
   const [isFaceDetected, setIsFaceDetected] = useState(false);
+  const [dialogTime, setDialogTime] = useState(5);
   const [isFaceRecognized, setIsFaceRecognized] = useState(false);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const navigate = useNavigate();
+
+  const publishRos = async () => {
+    const ros = new ROSLIB.Ros({
+      url: `ws://${ROS2_HOST}:${ROS2_PORT}`,
+    });
+
+    const stringTopic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/tts',
+      messageType: 'std_msgs/String',
+    });
+
+    const sapaan = formData.jenisKelamin === 'L' ? 'Bapak' : 'Ibu';
+
+    const message = new ROSLIB.Message({
+      data: `${formData.nama};${sapaan}`,
+    });
+
+    stringTopic.publish(message);
+  };
+
+  const insertOneDatabase = async (id) => {
+    const requestBody = {
+      id: id,
+      nama: formData.nama,
+      jenisKelamin: formData.jenisKelamin,
+    };
+
+    const request = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    };
+
+    const response = await fetch(
+      `http://${SERVER_HOST}:${SERVER_PORT}/api/add-customer`,
+      request
+    );
+
+    return response;
+  };
+
+  const insertOneCompreFace = async (id) => {
+    const imageBlob = base64ToBlob(capturedImage, 'image/jpeg');
+
+    const request = new FormData();
+    request.append('file', imageBlob, 'image.jpeg');
+
+    const response = await fetch(
+      `http://${COMPRE_HOST}:${COMPRE_PORT}/api/v1/recognition/faces?subject=${id}`,
+      {
+        method: 'POST',
+        headers: {
+          'x-api-key': COMPRE_API_KEY,
+        },
+        body: request,
+      }
+    );
+
+    return response;
+  };
+
+  const submitForm = async () => {
+    const newId = subjectId ? subjectId : Date.now().toString();
+
+    console.log('Form Data:', formData);
+    try {
+      const response = await insertOneCompreFace(newId);
+
+      if (!response.ok) {
+        console.error('Invalid Response:', response);
+
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+
+        showLog('Wajah tidak terdeteksi', 'error');
+
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      showLog('Wajah tidak terdeteksi', 'error');
+
+      return;
+    }
+
+    try {
+      const response = await insertOneDatabase(newId);
+
+      if (!response.ok) {
+        console.error('Invalid Response:', response);
+
+        setCapturedImage(null);
+        setIsPhotoTaken(false);
+
+        showLog('Wajah tidak terdeteksi', 'error');
+
+        return;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showLog('Gagal menambah data', 'error');
+    }
+
+    try {
+      await publishRos();
+    } catch (error) {
+      console.error('Publish ROS2 error:', error);
+    }
+
+    setCapturedImage(null);
+    setIsPhotoTaken(false);
+    setFormData({
+      nama: '',
+      jenisKelamin: '',
+    });
+    setSubjectId(null);
+
+    showLog('Selamat Datang!', 'success');
+
+    // Return home
+    navigate('/');
+  };
+
 
   const detectedFaceIsValid = (box) => {
     const area = (box.x_max - box.x_min) * (box.y_max - box.y_min);
@@ -166,19 +297,43 @@ function DetectSubjectPage() {
       }));
 
       setSubjectId(null);
-    }
 
-    navigate('/form');
+      navigate('/form');
+    } else {
+      submitForm();
+      setIsFaceDetected(false);
+    }
   };
 
   useEffect(() => {
     if (isFaceDetected) {
+      console.log('dialog Time:', dialogTime);
+      console.log('isPhotoTaken:', isPhotoTaken);
       if (isPhotoTaken) {
-        return;
+        const interval = setInterval(() => {
+          setDialogTime((prev) => prev - 1);
+        }, 1000);
+
+        if (dialogTime <= 0) {
+          setIsFaceDetected(false);
+          setDialogTime(5);
+          setFormData({
+            nama: '',
+            jenisKelamin: '',
+          });
+          setSubjectId(null);
+          setIsPhotoTaken(false);
+          setDetectedFaceSec(0);
+        }
+
+        return () => {
+          clearInterval(interval);
+        }
       }
 
+
+
       captureImage();
-      return;
     }
 
     const interval = setInterval(() => {
@@ -227,7 +382,7 @@ function DetectSubjectPage() {
           <DialogContentText>
             {isFaceRecognized ? (
               <p>
-                Selamat datang! Apakah Anda <strong>{formData.nama}</strong>?
+                Selamat datang! Apakah Anda <strong>{formData.nama}</strong>? (<strong>{dialogTime}</strong>)
               </p>
             ) : (
               <p>Wajah Anda tidak dikenali. Harap mengisi data selanjutnya.</p>
