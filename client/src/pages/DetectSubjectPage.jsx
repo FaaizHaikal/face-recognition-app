@@ -40,10 +40,12 @@ function DetectSubjectPage() {
   } = useContext(AppContext);
   const { showLog } = useContext(LoggerContext);
 
+  const timeCountdownStart = 5;
+
   const maxDetectedFaceSec = 4;
   const [detectedFaceSec, setDetectedFaceSec] = useState(0);
   const [isFaceDetected, setIsFaceDetected] = useState(false);
-  const [dialogTime, setDialogTime] = useState(5);
+  const [dialogTime, setDialogTime] = useState(timeCountdownStart);
   const [isFaceRecognized, setIsFaceRecognized] = useState(false);
 
   const theme = useTheme();
@@ -316,7 +318,7 @@ function DetectSubjectPage() {
 
         if (dialogTime <= 0) {
           setIsFaceDetected(false);
-          setDialogTime(5);
+          setDialogTime(timeCountdownStart);
           setFormData({
             nama: '',
             jenisKelamin: '',
