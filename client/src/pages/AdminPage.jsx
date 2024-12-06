@@ -152,12 +152,14 @@ function AdminPage() {
     }
   ];
 
+  const [fetched, setFetched] = useState(false);
   const [rows, setRows] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [adminAction, setAdminAction] = useState('');
 
   useEffect(() => {
+    if (!fetched) {
     setIsLoading(true);
 
     fetch(`http://${SERVER_HOST}:${SERVER_PORT}/api/get-customer`)
@@ -173,12 +175,16 @@ function AdminPage() {
         });
         setRows(rows);
         setIsLoading(false);
+        setFetched(true);
       });
-  }, []);
+    }
+  }, [fetched]);
 
   return (
     <AdminContext.Provider
       value={{
+        fetched,
+        setFetched,
         selectedRows,
         setSelectedRows,
         adminAction,

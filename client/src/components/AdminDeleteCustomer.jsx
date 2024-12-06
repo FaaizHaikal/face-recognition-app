@@ -11,7 +11,7 @@ import {
 import { Button } from '@mui/material';
 
 function AdminDeleteCustomer() {
-  const { adminAction, setAdminAction, selectedRows } =
+  const { setFetched, adminAction, setAdminAction, selectedRows } =
     useContext(AdminContext);
 
   const { SERVER_HOST, SERVER_PORT, COMPRE_API_KEY, COMPRE_HOST, COMPRE_PORT } =
@@ -53,7 +53,7 @@ function AdminDeleteCustomer() {
 
     showLog('Data berhasil dihapus', 'success');
 
-    window.location.reload();
+    setFetched(false);
   };
 
   const handleClickedNo = () => {

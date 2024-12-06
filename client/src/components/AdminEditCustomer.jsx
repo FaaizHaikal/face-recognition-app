@@ -12,7 +12,7 @@ import { InputLabel } from '@mui/material';
 import ROSLIB from 'roslib';
 
 function AdminEditCustomer() {
-  const { adminAction, setAdminAction } = useContext(AdminContext);
+  const { setFetched, adminAction, setAdminAction } = useContext(AdminContext);
   const { ROS2_HOST, ROS2_PORT } = useContext(AppContext);
 
   const ros = new ROSLIB.Ros({
@@ -115,8 +115,7 @@ function AdminEditCustomer() {
     });
 
     setAdminAction('');
-
-    window.location.reload();
+    setFetched(false);
   };
 
   const handleClickedNo = () => {
@@ -149,7 +148,7 @@ function AdminEditCustomer() {
           </InputLabel>
           <Select
             sx={{
-              width: '25%',
+              width: '50%',
             }}
             labelId="jenisKelaminLabel"
             name="jenisKelamin"

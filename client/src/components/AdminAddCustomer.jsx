@@ -15,7 +15,7 @@ import base64ToBlob from '../utils/Base64ToBlob';
 import ROSLIB from 'roslib';
 
 function AdminAddCustomer() {
-  const { adminAction, setAdminAction } = useContext(AdminContext);
+  const { setFetched, adminAction, setAdminAction } = useContext(AdminContext);
   const { ROS2_HOST, ROS2_PORT } = useContext(AppContext);
 
   const ros = new ROSLIB.Ros({
@@ -184,7 +184,7 @@ function AdminAddCustomer() {
 
     setAdminAction('');
 
-    window.location.reload();
+    setFetched(false);
   };
 
   const handleClickedNo = () => {
