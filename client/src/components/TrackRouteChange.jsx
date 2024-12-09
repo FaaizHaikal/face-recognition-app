@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import AppContext from '../context/AppContext';
 
 function TrackRouteChange() {
-  const { setIsPhotoTaken, setCapturedImage, setIsAdminLoggedIn } = useContext(AppContext);
+  const { setIsPhotoTaken, setCapturedImage, setIsAdminLoggedIn } =
+    useContext(AppContext);
   const location = useLocation();
 
   useEffect(() => {

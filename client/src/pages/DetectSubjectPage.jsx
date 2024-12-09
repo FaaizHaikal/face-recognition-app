@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { useMediaQuery, useTheme } from '@mui/material';
 import ROSLIB from 'roslib';
+import Background from '../assets/screenkios.png';
 
 function DetectSubjectPage() {
   const {
@@ -49,7 +50,7 @@ function DetectSubjectPage() {
   const [isFaceRecognized, setIsFaceRecognized] = useState(false);
 
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('xs'));
 
   const navigate = useNavigate();
 
@@ -177,7 +178,6 @@ function DetectSubjectPage() {
     // Return home
     navigate('/');
   };
-
 
   const detectedFaceIsValid = (box) => {
     const area = (box.x_max - box.x_min) * (box.y_max - box.y_min);
@@ -330,10 +330,8 @@ function DetectSubjectPage() {
 
         return () => {
           clearInterval(interval);
-        }
+        };
       }
-
-
 
       captureImage();
     }
@@ -349,79 +347,96 @@ function DetectSubjectPage() {
 
   return (
     <Box
-      width={cameraWidth}
       sx={{
-        position: 'absolute',
+        backgroundImage: `url(${Background})`,
+        backgroundPosition: 'center',
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+        height: '100vh',
+        display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        top: '25%',
-        left: '50%',
-        transform: 'translate(-50%, -25%)',
+
       }}
     >
-      <Typography
-        variant="h6"
+      <Box
+        width={cameraWidth}
         sx={{
-          textAlign: 'center',
-          marginBottom: 2,
-          fontWeight: 'bold',
+          position: 'absolute',
+          justifyContent: 'center',
+          alignItems: 'center',
+          top: '25%',
+          left: '50%',
+          transform: 'translate(-50%, -25%)',
         }}
       >
-        Hadapkan wajah Anda ke kamera
-      </Typography>
-      {isPhotoTaken ? (
-        <img src={capturedImage} style={{ borderRadius: 30 }} />
-      ) : (
-        <Camera />
-      )}
-      <Progress value={detectedFaceSec * (100 / maxDetectedFaceSec)} />
-      <Dialog
-        fullScreen={fullScreen}
-        open={isFaceDetected}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            {isFaceRecognized ? (
-              <p>
-                Selamat datang! Apakah Anda <strong>{formData.nama}</strong>? (<strong>{dialogTime}</strong>)
-              </p>
-            ) : (
-              <p>Wajah Anda tidak dikenali. Harap mengisi data selanjutnya.</p>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        {isFaceRecognized ? (
-          <DialogActions>
-            <Button
-              autoFocus
-              onClick={handleClick(true)}
-              color="error"
-              sx={{ fontWeight: 900 }}
-            >
-              {`Tidak`}
-            </Button>
-            <Button
-              onClick={handleClick(false)}
-              autoFocus
-              color="success"
-              sx={{ fontWeight: 900 }}
-            >
-              {`Ya`}
-            </Button>
-          </DialogActions>
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: 'center',
+            marginBottom: 2,
+            fontWeight: 'bold',
+          }}
+        >
+          Hadapkan wajah Anda ke kamera
+        </Typography>
+        {isPhotoTaken ? (
+          <img src={capturedImage} style={{ borderRadius: 30 }} />
         ) : (
-          <DialogActions>
-            <Button
-              autoFocus
-              onClick={handleClick(true)}
-              sx={{ fontWeight: 900 }}
-            >
-              {`Lanjutkan`}
-            </Button>
-          </DialogActions>
+          <Camera />
         )}
-      </Dialog>
+        <Progress value={detectedFaceSec * (100 / maxDetectedFaceSec)} />
+        <Dialog
+          fullScreen={fullScreen}
+          open={isFaceDetected}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              {isFaceRecognized ? (
+                <p>
+                  Selamat datang! <br/> Apakah Anda <strong>{formData.nama}</strong>?
+                  (<strong>{dialogTime}</strong>)
+                </p>
+              ) : (
+                <p>
+                  Wajah Anda tidak dikenali. Harap mengisi data selanjutnya.
+                </p>
+              )}
+            </DialogContentText>
+          </DialogContent>
+          {isFaceRecognized ? (
+            <DialogActions>
+              <Button
+                autoFocus
+                onClick={handleClick(true)}
+                color="error"
+                sx={{ fontWeight: 900 }}
+              >
+                {`Tidak`}
+              </Button>
+              <Button
+                onClick={handleClick(false)}
+                autoFocus
+                color="success"
+                sx={{ fontWeight: 900 }}
+              >
+                {`Ya`}
+              </Button>
+            </DialogActions>
+          ) : (
+            <DialogActions>
+              <Button
+                autoFocus
+                onClick={handleClick(true)}
+                sx={{ fontWeight: 900 }}
+              >
+                {`Lanjutkan`}
+              </Button>
+            </DialogActions>
+          )}
+        </Dialog>
+      </Box>
     </Box>
   );
 }

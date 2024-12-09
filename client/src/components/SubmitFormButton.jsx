@@ -165,7 +165,12 @@ function SubmitFormButton() {
   };
 
   return (
-    <Button variant="contained" color="success" onClick={handleClick}>
+    <Button
+      sx={{ marginTop: 2 }}
+      variant="contained"
+      color="success"
+      onClick={handleClick}
+    >
       Submit
     </Button>
   );

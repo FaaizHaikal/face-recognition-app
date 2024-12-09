@@ -37,7 +37,7 @@ function DataInput() {
       </InputLabel>
       <Select
         sx={{
-          width: '15%',
+          width: '100px',
         }}
         labelId="jenisKelaminLabel"
         name="jenisKelamin"

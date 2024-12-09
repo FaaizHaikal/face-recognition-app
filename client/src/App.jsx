@@ -8,6 +8,8 @@ import AdminPage from './pages/AdminPage';
 import DetectSubjectPage from './pages/DetectSubjectPage';
 import TrackRouteChange from './components/TrackRouteChange';
 import Navbar from './components/Navbar';
+import { Box } from '@mui/material';
+import Background from './assets/screenkios.png';
 
 function App() {
   const COMPRE_API_KEY = import.meta.env.VITE_COMPRE_API_KEY;
@@ -68,6 +70,16 @@ function App() {
         setIsFormValid,
       }}
     >
+      {/* <Box
+        // background image from assets
+        sx={{
+          backgroundImage: `url(${Background})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          height: '100vh',
+          width: '100vw',
+        }}
+      > */}
       <Router>
         <TrackRouteChange />
         <Navbar />
@@ -80,6 +92,7 @@ function App() {
           </Routes>
         </LoggerProvider>
       </Router>
+      {/* </Box> */}
     </AppContext.Provider>
   );
 }

@@ -12,13 +12,23 @@ function Navbar() {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography component="div" sx={{ flexGrow: 1, fontSize: '15px' }}>
           Face Recognition R2S2
         </Typography>
-        <Button color="inherit" component={NavLink} to="/" startIcon={<HomeIcon/>}>
+        <Button
+          color="inherit"
+          component={NavLink}
+          to="/"
+          startIcon={<HomeIcon />}
+        >
           Home
         </Button>
-        <Button color="inherit" component={NavLink} to="/admin" startIcon={<PersonIcon/>}>
+        <Button
+          color="inherit"
+          component={NavLink}
+          to="/admin"
+          startIcon={<PersonIcon />}
+        >
           Admin
         </Button>
       </Toolbar>

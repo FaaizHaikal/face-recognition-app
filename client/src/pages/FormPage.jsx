@@ -8,7 +8,7 @@ function FormPage() {
   return (
     <Box
       style={{
-        margin: 30,
+        margin: 15,
         padding: 16,
         border: '1px solid #ccc',
         borderRadius: 8,

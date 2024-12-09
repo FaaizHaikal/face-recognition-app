@@ -16,14 +16,22 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { styled } from '@mui/material/styles';
 
 function AdminPage() {
-  const { SERVER_HOST, SERVER_PORT, COMPRE_HOST, COMPRE_PORT, COMPRE_API_KEY, isAdminLoggedIn, setFormData } = useContext(AppContext);
+  const {
+    SERVER_HOST,
+    SERVER_PORT,
+    COMPRE_HOST,
+    COMPRE_PORT,
+    COMPRE_API_KEY,
+    isAdminLoggedIn,
+    setFormData,
+  } = useContext(AppContext);
   const { showLog } = useContext(LoggerContext);
 
   const navigate = useNavigate();
 
-  if (!isAdminLoggedIn) {
-    navigate('/login');
-  }
+  // if (!isAdminLoggedIn) {
+  //   navigate('/login');
+  // }
 
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -58,7 +66,6 @@ function AdminPage() {
 
     return response;
   };
-    
 
   const columns = [
     {
@@ -66,16 +73,17 @@ function AdminPage() {
       headerName: 'ID',
       width: 150,
       editable: false,
+      hide: true
     },
     {
       field: 'nama',
       headerName: 'Nama',
-      width: 250,
+      width: 175,
     },
     {
       field: 'jenisKelamin',
-      headerName: 'Jenis Kelamin',
-      width: 130,
+      headerName: 'Gender',
+      width: 100,
     },
     {
       field: 'action',
@@ -107,50 +115,54 @@ function AdminPage() {
               color="secondary"
               size="small"
               component="label"
-              startIcon={<AddPhotoAlternateIcon/>}
+              startIcon={<AddPhotoAlternateIcon />}
             >
               Tambah Wajah
               <VisuallyHiddenInput
-          type="file"
-          accept="image/*"
-          onChange={(event) => {
-            const file = event.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = async (e) => {
-                const image = e.target.result;
-                const id = params.row.id;
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                      const image = e.target.result;
+                      const id = params.row.id;
 
-                try {
-                  const response = await insertOneCompreFace(id, image);
+                      try {
+                        const response = await insertOneCompreFace(id, image);
 
-                  if (!response.ok) {
-                    console.error('Invalid Response:', response);
+                        if (!response.ok) {
+                          console.error('Invalid Response:', response);
 
-                    showLog('Wajah tidak terdeteksi', 'error');
+                          showLog('Wajah tidak terdeteksi', 'error');
 
-                    return;
+                          return;
+                        }
+                      } catch (error) {
+                        console.error(error);
+                        showLog('Wajah tidak terdeteksi', 'error');
+
+                        return;
+                      }
+
+                      showLog('Berhasil menambahkan data wajah', 'success');
+                    };
+
+                    reader.readAsDataURL(file);
                   }
-                } catch (error) {
-                  console.error(error);
-                  showLog('Wajah tidak terdeteksi', 'error');
-
-                  return;
-                }
-
-                showLog('Berhasil menambahkan data wajah', 'success');
-              };
-
-              reader.readAsDataURL(file);
-            }
-          }}
+                }}
               />
             </Button>
           </Box>
         );
       },
-    }
+    },
   ];
+
+  const columnVisibilityModel = {
+    id: false,
+  };
 
   const [fetched, setFetched] = useState(false);
   const [rows, setRows] = useState([]);
@@ -160,23 +172,23 @@ function AdminPage() {
 
   useEffect(() => {
     if (!fetched) {
-    setIsLoading(true);
+      setIsLoading(true);
 
-    fetch(`http://${SERVER_HOST}:${SERVER_PORT}/api/get-customer`)
-      .then((response) => response.json())
-      .then((data) => {
-        let rows = [];
-        data.forEach((item, index) => {
-          rows.push({
-            id: item.customerId,
-            nama: item.nama,
-            jenisKelamin: item.jenisKelamin,
+      fetch(`http://${SERVER_HOST}:${SERVER_PORT}/api/get-customer`)
+        .then((response) => response.json())
+        .then((data) => {
+          let rows = [];
+          data.forEach((item) => {
+            rows.push({
+              id: item.customerId,
+              nama: item.nama,
+              jenisKelamin: item.jenisKelamin,
+            });
           });
+          setRows(rows);
+          setIsLoading(false);
+          setFetched(true);
         });
-        setRows(rows);
-        setIsLoading(false);
-        setFetched(true);
-      });
     }
   }, [fetched]);
 
@@ -209,6 +221,9 @@ function AdminPage() {
             disableRowSelectionOnClick
             disableColumnMenu
             loading={isLoading}
+            autoHeight
+            columnVisibilityModel={columnVisibilityModel}
+            scrollbarSize={10}
             onRowSelectionModelChange={(newSelection) => {
               setSelectedRows(newSelection);
             }}
